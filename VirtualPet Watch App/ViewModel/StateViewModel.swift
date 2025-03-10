@@ -8,7 +8,7 @@ class StatesViewModel: ObservableObject {
     @Published var hungerLevel: Double = 100.0
     
     @Published var isDead: Bool = false
-    @Published var currentAsset: String = "Idle1"
+    @Published var currentAsset: String = "WhiteCatIdle(Children)1"
     @Published var timer: AnyCancellable?
     @Published var lastActionTime: Date = Date()
     @Published var timeOfDeathStart: Date? = nil
@@ -52,7 +52,7 @@ class StatesViewModel: ObservableObject {
         // Se passaram 24 horas desde o colapso, mata o pet
         if let deathStart = timeOfDeathStart, currentTime.timeIntervalSince(deathStart) >= 0.024 * 3600 {
             isDead = true
-            currentAsset = "Morto1"
+            currentAsset = "Dead"
             stopTimer()
         }
         
@@ -74,18 +74,18 @@ class StatesViewModel: ObservableObject {
     private func feedPet() {
         if canFeed() {
             hungerLevel = 100.0
-            currentAsset = "Comendo1"
+            currentAsset = "WhiteCatFeed(Children)1"
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self.currentAsset = "Idle1"
+                self.currentAsset = "WhiteCatIdle(Children)1"
             }
         } else {
-            currentAsset = "Negando1"
+            currentAsset = "WhiteCatDenying(Children)1"
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.currentAsset = "Negando2"
+                self.currentAsset = "WhiteCatDenying(Children)2"
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    self.currentAsset = "Negando3"
+                    self.currentAsset = "WhiteCatDenying(Children)3"
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.currentAsset = "Idle1"
+                        self.currentAsset = "WhiteCatIdle(Children)1"
                     }
                 }
             }
@@ -95,18 +95,18 @@ class StatesViewModel: ObservableObject {
     private func toggleSleep() {
         if isSleeping { // Se estiver dormindo, acorda
             isSleeping = false
-            currentAsset = "Idle1"
+            currentAsset = "WhiteCatIdle(Children)1"
         } else if canSleep() { // Só pode dormir se a condição permitir
             isSleeping = true
-            currentAsset = "Dormindo1"
+            currentAsset = "WhiteCatSleep(Children)1"
         } else { // Se não puder dormir, mostra animação de negação
-            currentAsset = "Negando1"
+            currentAsset = "WhiteCatDenying(Children)1"
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.currentAsset = "Negando2"
+                self.currentAsset = "WhiteCatDenying(Children)2"
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    self.currentAsset = "Negando3"
+                    self.currentAsset = "WhiteCatDenying(Children)3"
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.currentAsset = "Idle1"
+                        self.currentAsset = "WhiteCatIdle(Children)1"
                     }
                 }
             }
@@ -129,18 +129,18 @@ class StatesViewModel: ObservableObject {
     private func playWithPet() {
         if canPlay() {
             joyLevel = 100.0
-            currentAsset = "Doente1"
+            currentAsset = "WhiteCatSad(Children)1"
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self.currentAsset = "Idle1"
+                self.currentAsset = "WhiteCatIdle(Children)1"
             }
         } else {
-            currentAsset = "Negando1"
+            currentAsset = "WhiteCatDenying(Children)1"
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.currentAsset = "Negando2"
+                self.currentAsset = "WhiteCatDenying(Children)2"
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    self.currentAsset = "Negando3"
+                    self.currentAsset = "WhiteCatDenying(Children)3"
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.currentAsset = "Idle1"
+                        self.currentAsset = "WhiteCatIdle(Children)1"
                     }
                 }
             }
