@@ -1,43 +1,31 @@
+import Foundation
 import SwiftUI
 import Combine
 
+enum PetEvolutionStage: String, Codable {
+    case baby = "Baby"
+    case children = "Children"
+    case adult = "Adult"
+}
+
 class StatesViewModel: ObservableObject {
-    @Published var sleepLevel: Double = 100.0 {
-        didSet { saveState() }
-    }
-    @Published var joyLevel: Double = 100.0 {
-        didSet { saveState() }
-    }
-    @Published var isSleeping: Bool = false {
-        didSet { saveState() }
-    }
-    @Published var hungerLevel: Double = 100.0 {
-        didSet { saveState() }
-    }
-    
-    @Published var isDead: Bool = false {
-        didSet { saveState() }
-    }
-    @Published var currentAsset: String = "WhiteCatIdle(Children)1" {
-        didSet { saveState() }
-    }
+    @Published var sleepLevel: Double = 100.0
+    @Published var joyLevel: Double = 100.0
+    @Published var isSleeping: Bool = false
+    @Published var hungerLevel: Double = 100.0
+    @Published var isDead: Bool = false
+    @Published var currentAsset: String = "WhiteCatIdle(Baby)1"
+    @Published var lastActionTime: Date = Date()
+    @Published var timeOfDeathStart: Date?
+    @Published var crownValue: Double = 0.0
+    @Published var evolutionStage: PetEvolutionStage = .baby
+    @Published var birthDate: Date = Date()
     @Published var timer: AnyCancellable?
-    @Published var lastActionTime: Date = Date() {
-        didSet { saveState() }
-    }
-    @Published var timeOfDeathStart: Date? = nil {
-        didSet { saveState() }
-    }
-    @Published var crownValue: Double = 0 {
-        didSet { saveState() }
-    }
-    
-    private let userDefaults = UserDefaults.standard
-    private let stateKey = "petState"
     
     init() {
         loadState()
         calculateOfflineDecay()
+        updateEvolutionStage()
         startTimer()
     }
     
@@ -45,7 +33,10 @@ class StatesViewModel: ObservableObject {
         stopTimer()
     }
     
-    // MARK: - State Persistence
+    private var cancellables = Set<AnyCancellable>()
+    private let userDefaults = UserDefaults.standard
+    private let stateKey = "PetState"
+    private var decayTimer: Timer?
     
     private struct PetState: Codable {
         let sleepLevel: Double
@@ -57,6 +48,8 @@ class StatesViewModel: ObservableObject {
         let lastActionTime: Date
         let timeOfDeathStart: Date?
         let crownValue: Double
+        let evolutionStage: PetEvolutionStage
+        let birthDate: Date
     }
     
     private func saveState() {
@@ -69,58 +62,171 @@ class StatesViewModel: ObservableObject {
             currentAsset: currentAsset,
             lastActionTime: lastActionTime,
             timeOfDeathStart: timeOfDeathStart,
-            crownValue: crownValue
+            crownValue: crownValue,
+            evolutionStage: evolutionStage,
+            birthDate: birthDate
         )
-        userDefaults.set(encodable: state, forKey: stateKey)
+        
+        let encoder = JSONEncoder()
+        let encoded = try? encoder.encode(state)
+        userDefaults.set(encoded, forKey: stateKey)
+        userDefaults.synchronize()
     }
     
     private func loadState() {
-        if let state = userDefaults.get(PetState.self, forKey: stateKey) {
-            sleepLevel = state.sleepLevel
-            joyLevel = state.joyLevel
-            isSleeping = state.isSleeping
-            hungerLevel = state.hungerLevel
-            isDead = state.isDead
-            currentAsset = state.currentAsset
-            lastActionTime = state.lastActionTime
-            timeOfDeathStart = state.timeOfDeathStart
-            crownValue = state.crownValue
+        //        if let state = userDefaults.get(PetState.self, forKey: stateKey) {
+        //            sleepLevel = state.sleepLevel
+        //            joyLevel = state.joyLevel
+        //            isSleeping = state.isSleeping
+        //            hungerLevel = state.hungerLevel
+        //            isDead = state.isDead
+        //            currentAsset = state.currentAsset
+        //            lastActionTime = state.lastActionTime
+        //            timeOfDeathStart = state.timeOfDeathStart
+        //            crownValue = state.crownValue
+        //            evolutionStage = state.evolutionStage
+        //            birthDate = state.birthDate
+        //        }
+        
+        guard let state = userDefaults.data(forKey: stateKey) else { return }
+        let decoder = JSONDecoder()
+        let decoded = try? decoder.decode(PetState.self, from: state)
+        
+        if let decoded = decoded {
+            sleepLevel = decoded.sleepLevel
+            joyLevel = decoded.joyLevel
+            isSleeping = decoded.isSleeping
+            hungerLevel = decoded.hungerLevel
+            isDead = decoded.isDead
+            currentAsset = decoded.currentAsset
+            lastActionTime = decoded.lastActionTime
+            timeOfDeathStart = decoded.timeOfDeathStart
+        }
+    }
+    
+    func feedPet() {
+        if canFeed() {
+            hungerLevel = 100.0
+            currentAsset = "WhiteCatFeed(\(evolutionStage.rawValue))1"
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.currentAsset = "WhiteCatIdle(\(self.evolutionStage.rawValue))1"
+            }
+        } else {
+            currentAsset = "WhiteCatDenying(\(evolutionStage.rawValue))1"
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.currentAsset = "WhiteCatDenying(\(self.evolutionStage.rawValue))2"
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.currentAsset = "WhiteCatDenying(\(self.evolutionStage.rawValue))3"
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        self.currentAsset = "WhiteCatIdle(\(self.evolutionStage.rawValue))1"
+                    }
+                }
+            }
+        }
+        saveState()
+    }
+    
+    func toggleSleep() {
+        isSleeping.toggle()
+        currentAsset = isSleeping
+        ? "WhiteCatSleep(\(evolutionStage.rawValue))1"
+        : "WhiteCatIdle(\(evolutionStage.rawValue))1"
+        saveState()
+    }
+    
+    func playWithPet() {
+        joyLevel = min(100.0, joyLevel + 20.0)
+        crownValue += 10
+        currentAsset = "WhiteCatPlay(\(evolutionStage.rawValue))1"
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            self.currentAsset = "WhiteCatIdle(\(self.evolutionStage.rawValue))1"
+        }
+        saveState()
+    }
+    
+    private func canFeed() -> Bool {
+        let timeUntilNextFeed = hungerLevel / 100.0 * 12 * 60 * 60
+        return timeUntilNextFeed <= 2.5 * 60 * 60
+    }
+    
+    public func startTimer() {
+        decayTimer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { _ in
+            self.updatePetState()
+        }
+    }
+    
+    func updatePetState() {
+        let currentTime = Date()
+        let timeSinceLastAction = currentTime.timeIntervalSince(lastActionTime)
+        
+        updateEvolutionStage()
+        
+        guard !isDead else { return }
+        
+        let decayAmount = timeSinceLastAction / (12 * 60 * 60) * 100.0
+        hungerLevel = max(0.0, hungerLevel - decayAmount)
+        
+        if hungerLevel <= 0.0 {
+            if let deathStart = timeOfDeathStart {
+                if currentTime.timeIntervalSince(deathStart) >= 60 * 60 {
+                    isDead = true
+                    currentAsset = "Dead"
+                    decayTimer?.invalidate()
+                }
+            } else {
+                timeOfDeathStart = currentTime
+            }
+        } else {
+            timeOfDeathStart = nil
+        }
+        
+        lastActionTime = currentTime
+        saveState()
+    }
+    
+    private func calculateOfflineDecay() {
+        let currentTime = Date()
+        let timeSinceLastAction = currentTime.timeIntervalSince(lastActionTime)
+        
+        guard !isDead else { return }
+        
+        let decayAmount = timeSinceLastAction / (12 * 60 * 60) * 100.0
+        hungerLevel = max(0.0, hungerLevel - decayAmount)
+        
+        if hungerLevel <= 0.0 {
+            if let deathStart = timeOfDeathStart {
+                if currentTime.timeIntervalSince(deathStart) >= 60 * 60 {
+                    isDead = true
+                    currentAsset = "Dead"
+                }
+            } else {
+                timeOfDeathStart = currentTime
+            }
+        } else {
+            timeOfDeathStart = nil
+        }
+        
+        saveState()
+    }
+    
+    private func updateEvolutionStage() {
+        let now = Date()
+        let age = Calendar.current.dateComponents([.month], from: birthDate, to: now).month ?? 0
+        
+        if age >= 4 {
+            evolutionStage = .adult
+            currentAsset = "WhiteCatIdle(\(evolutionStage.rawValue))1"
+            
+        } else if age >= 1 {
+            evolutionStage = .children
+            currentAsset = "WhiteCatIdle(\(evolutionStage.rawValue))1"
+        } else {
+            evolutionStage = .baby
+            currentAsset = "WhiteCatIdle(\(evolutionStage.rawValue))1"
         }
     }
     
     // MARK: - Offline Decay Calculation
-    
-    private func calculateOfflineDecay() {
-        let now = Date()
-        let timeSinceLastAction = now.timeIntervalSince(lastActionTime)
-        
-        if timeSinceLastAction > 0 {
-            if isSleeping {
-                // Durante o sono offline, apenas recupera energia
-                sleepLevel += (100.0 / (16 * 3600)) * timeSinceLastAction
-                if sleepLevel >= 100.0 {
-                    sleepLevel = 100.0
-                    isSleeping = false
-                    currentAsset = "WhiteCatIdle(Children)1"
-                }
-            } else {
-                // Decaimento normal dos status
-                hungerLevel -= (100.0 / (12 * 3600)) * timeSinceLastAction
-                sleepLevel -= (100.0 / (16 * 3600)) * timeSinceLastAction
-                joyLevel -= (100.0 / (24 * 3600)) * timeSinceLastAction
-                
-                // Garante que os valores não fiquem negativos
-                hungerLevel = max(0, hungerLevel)
-                sleepLevel = max(0, sleepLevel)
-                joyLevel = max(0, joyLevel)
-            }
-            
-            // Verifica se o pet morreu durante o tempo offline
-            checkForDeath(now: now)
-            
-            lastActionTime = now
-        }
-    }
     
     private func checkForDeath(now: Date) {
         if hungerLevel <= 0 || sleepLevel <= 0 || joyLevel <= 0 {
@@ -138,52 +244,9 @@ class StatesViewModel: ObservableObject {
         }
     }
     
-    func startTimer() {
-        timer = Timer.publish(every: 1, on: .main, in: .common)
-            .autoconnect()
-            .sink { _ in
-                self.updatePetState()
-            }
-    }
-    
     func stopTimer() {
         timer?.cancel()
         timer = nil
-    }
-    
-    func updatePetState() {
-        let currentTime = Date()
-        let timeSinceLastAction = currentTime.timeIntervalSince(lastActionTime)
-        
-        if isSleeping {
-            recoverySleepLevel(timeSinceLastAction)
-        } else {
-            hungerLevel -= (100.0 / (0.012 * 3600)) * timeSinceLastAction
-            sleepLevel -= (100.0 / (0.016 * 3600)) * timeSinceLastAction
-            joyLevel -= (100.0 / (0.024 * 3600)) * timeSinceLastAction
-        }
-        
-        // Verifica se algum nível chegou a 0
-        if hungerLevel <= 0 || sleepLevel <= 0 || joyLevel <= 0 {
-            if timeOfDeathStart == nil {
-                timeOfDeathStart = currentTime // Registra o momento do colapso
-            }
-        } else {
-            timeOfDeathStart = nil // Reseta se pelo menos um nível for restaurado
-        }
-        
-        // Se passaram 24 horas desde o colapso, mata o pet
-        if let deathStart = timeOfDeathStart, currentTime.timeIntervalSince(deathStart) >= 0.024 * 3600 {
-            isDead = true
-            currentAsset = "Dead"
-            stopTimer()
-        }
-        
-        lastActionTime = currentTime
-    }
-    
-    private func canFeed() -> Bool {
-        return hungerLevel <= (100.0 / 12 * 9) && !isSleeping && !isDead
     }
     
     private func canSleep() -> Bool {
@@ -194,50 +257,6 @@ class StatesViewModel: ObservableObject {
         return joyLevel <= (100.0 / 24 * 9) && !isSleeping && !isDead
     }
     
-    private func feedPet() {
-        if canFeed() {
-            hungerLevel = 100.0
-            currentAsset = "WhiteCatFeed(Children)1"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self.currentAsset = "WhiteCatIdle(Children)1"
-            }
-        } else {
-            currentAsset = "WhiteCatDenying(Children)1"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.currentAsset = "WhiteCatDenying(Children)2"
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    self.currentAsset = "WhiteCatDenying(Children)3"
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.currentAsset = "WhiteCatIdle(Children)1"
-                    }
-                }
-            }
-        }
-    }
-    
-    private func toggleSleep() {
-        if isSleeping { // Se estiver dormindo, acorda
-            isSleeping = false
-            currentAsset = "WhiteCatIdle(Children)1"
-        } else if canSleep() { // Só pode dormir se a condição permitir
-            isSleeping = true
-            currentAsset = "WhiteCatSleep(Children)1"
-        } else { // Se não puder dormir, mostra animação de negação
-            currentAsset = "WhiteCatDenying(Children)1"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.currentAsset = "WhiteCatDenying(Children)2"
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    self.currentAsset = "WhiteCatDenying(Children)3"
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.currentAsset = "WhiteCatIdle(Children)1"
-                    }
-                }
-            }
-        }
-        
-        lastActionTime = Date()
-    }
-    
     private func recoverySleepLevel(_ timeSinceLastAction: TimeInterval) {
         if isSleeping {
             sleepLevel += (100.0 / (16 * 3600)) * timeSinceLastAction
@@ -245,27 +264,6 @@ class StatesViewModel: ObservableObject {
             if sleepLevel >= 100.0 {
                 sleepLevel = 100.0
                 toggleSleep() // Acorda automaticamente quando atinge 100%
-            }
-        }
-    }
-    
-    private func playWithPet() {
-        if canPlay() {
-            joyLevel = 100.0
-            currentAsset = "WhiteCatSad(Children)1"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self.currentAsset = "WhiteCatIdle(Children)1"
-            }
-        } else {
-            currentAsset = "WhiteCatDenying(Children)1"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.currentAsset = "WhiteCatDenying(Children)2"
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    self.currentAsset = "WhiteCatDenying(Children)3"
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.currentAsset = "WhiteCatIdle(Children)1"
-                    }
-                }
             }
         }
     }
