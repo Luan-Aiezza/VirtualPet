@@ -2,12 +2,6 @@ import Foundation
 import SwiftUI
 import Combine
 
-enum PetEvolutionStage: String, Codable {
-    case baby = "Baby"
-    case children = "Children"
-    case adult = "Adult"
-}
-
 class StatesViewModel: ObservableObject {
     @Published var sleepLevel: Double = 100.0
     @Published var joyLevel: Double = 100.0
@@ -21,6 +15,19 @@ class StatesViewModel: ObservableObject {
     @Published var evolutionStage: PetEvolutionStage = .baby
     @Published var birthDate: Date = Date()
     @Published var timer: AnyCancellable?
+    
+    var currentBackground: String {
+        switch Int(crownValue) {
+        case 0:
+            return "Kitchen"
+        case 1:
+            return "Bedroom"
+        case 2:
+            return "Room"
+        default:
+            return "Room"
+        }
+    }
     
     init() {
         loadState()
@@ -74,19 +81,6 @@ class StatesViewModel: ObservableObject {
     }
     
     private func loadState() {
-        //        if let state = userDefaults.get(PetState.self, forKey: stateKey) {
-        //            sleepLevel = state.sleepLevel
-        //            joyLevel = state.joyLevel
-        //            isSleeping = state.isSleeping
-        //            hungerLevel = state.hungerLevel
-        //            isDead = state.isDead
-        //            currentAsset = state.currentAsset
-        //            lastActionTime = state.lastActionTime
-        //            timeOfDeathStart = state.timeOfDeathStart
-        //            crownValue = state.crownValue
-        //            evolutionStage = state.evolutionStage
-        //            birthDate = state.birthDate
-        //        }
         
         guard let state = userDefaults.data(forKey: stateKey) else { return }
         let decoder = JSONDecoder()
@@ -163,49 +157,70 @@ class StatesViewModel: ObservableObject {
         
         guard !isDead else { return }
         
-        let decayAmount = timeSinceLastAction / (12 * 60 * 60) * 100.0
-        hungerLevel = max(0.0, hungerLevel - decayAmount)
+        // Decaimento da Fome
+        let hungerDecayAmount = timeSinceLastAction / (12 * 60 * 60) * 100.0
+        hungerLevel = max(0.0, hungerLevel - hungerDecayAmount)
         
-        if hungerLevel <= 0.0 {
+        // Decaimento da Alegria
+        let joyDecayAmount = timeSinceLastAction / (24 * 60 * 60) * 100.0
+        joyLevel = max(0.0, joyLevel - joyDecayAmount)
+        
+        // Decaimento/recuperação do Sono
+        if isSleeping {
+            let sleepRecovery = timeSinceLastAction / (16 * 60 * 60) * 100.0
+            sleepLevel += sleepRecovery
+            if sleepLevel >= 100.0 {
+                sleepLevel = 100.0
+                toggleSleep() // Acorda automaticamente
+            }
+            
+        } else {
+            let sleepDecay = timeSinceLastAction / (16 * 60 * 60) * 100.0
+            sleepLevel = max(0.0, sleepLevel - sleepDecay)
+        }
+        
+        // Verificação de morte
+        checkForDeath(now: currentTime)
+        
+        lastActionTime = currentTime
+        saveState()
+    }
+    
+    func calculateOfflineDecay() {
+        let currentTime = Date()
+        let timeSinceLastAction = currentTime.timeIntervalSince(lastActionTime)
+        
+        let decayAmount = timeSinceLastAction / (12 * 60 * 60) * 100.0
+        
+        hungerLevel = max(0.0, hungerLevel - decayAmount)
+        joyLevel = max(0.0, joyLevel - decayAmount)
+        
+        if isSleeping {
+            // Recupera sono até o máximo
+            sleepLevel = min(100.0, sleepLevel + (100.0 / (16 * 3600)) * timeSinceLastAction)
+            if sleepLevel >= 100.0 {
+                sleepLevel = 100.0
+                toggleSleep()
+            }
+        } else {
+            sleepLevel = max(0.0, sleepLevel - decayAmount)
+        }
+        
+        // Verifica se morreu enquanto offline
+        if hungerLevel <= 0.0 || sleepLevel <= 0.0 || joyLevel <= 0.0 {
             if let deathStart = timeOfDeathStart {
                 if currentTime.timeIntervalSince(deathStart) >= 60 * 60 {
                     isDead = true
                     currentAsset = "Dead"
-                    decayTimer?.invalidate()
                 }
             } else {
-                timeOfDeathStart = currentTime
+                timeOfDeathStart = lastActionTime
             }
         } else {
             timeOfDeathStart = nil
         }
         
         lastActionTime = currentTime
-        saveState()
-    }
-    
-    private func calculateOfflineDecay() {
-        let currentTime = Date()
-        let timeSinceLastAction = currentTime.timeIntervalSince(lastActionTime)
-        
-        guard !isDead else { return }
-        
-        let decayAmount = timeSinceLastAction / (12 * 60 * 60) * 100.0
-        hungerLevel = max(0.0, hungerLevel - decayAmount)
-        
-        if hungerLevel <= 0.0 {
-            if let deathStart = timeOfDeathStart {
-                if currentTime.timeIntervalSince(deathStart) >= 60 * 60 {
-                    isDead = true
-                    currentAsset = "Dead"
-                }
-            } else {
-                timeOfDeathStart = currentTime
-            }
-        } else {
-            timeOfDeathStart = nil
-        }
-        
         saveState()
     }
     
@@ -277,48 +292,87 @@ class StatesViewModel: ObservableObject {
     }
     
     @ViewBuilder
-    func handleCrownValueProgressBar() -> some View {
+    func handleCrownValueButton() -> some View {
+        
         let selectedIndex = Int(round(crownValue))
         
         switch selectedIndex {
         case 0:
+            
             let hunger = bindValue(value: hungerLevel)
-            ProgressBar(value:hunger, color: .red)
+            
             Button(action: feedPet) {
-                Text("Alimentar")
+                Text("Feed")
+                    .bold()
+
             }
+            .colorMultiply(Color.yellow)
             .disabled(!canFeed())
+            
             
         case 1:
             let sleep = bindValue(value: sleepLevel)
-            ProgressBar(value: sleep, color: .blue)
+            
             switch isSleeping{
                 
             case false:
                 Button(action: toggleSleep) {
-                    Text("Dormir")
-                }.disabled(!canSleep())
+                    Text("Sleep")
+                        .bold()
+                }
+                .colorMultiply(Color.blue)
+                .disabled(!canSleep())
                 
             case true:
                 Button(action: toggleSleep) {
-                    Text("Acordar")
+                    Text("Awake")
+                        .bold()
                 }
                 
             }
             
         case 2:
+            
+            let joy = bindValue(value: joyLevel)
+            Button(action: playWithPet) {
+                Text("Play")
+                    .bold()
+            }
+            .colorMultiply(Color.green)
+            .disabled(!canPlay())
+            
+        default:
+            EmptyView()
+        }
+        
+    }
+    
+    @ViewBuilder
+    func handleCrownValueProgressBar() -> some View {
+        let selectedIndex = Int(round(crownValue))
+        
+        switch selectedIndex {
+        case 0:
+            
+            let hunger = bindValue(value: hungerLevel)
+            ProgressBar(value:hunger, color: .yellow)
+            
+        case 1:
+            let sleep = bindValue(value: sleepLevel)
+            ProgressBar(value: sleep, color: .blue)
+            
+            
+        case 2:
+            
             let joy = bindValue(value: joyLevel)
             ProgressBar(value: joy, color: .green)
-            Button(action: playWithPet) {
-                Text("Brincar")
-            }
-            .disabled(!canPlay())
             
         default:
             EmptyView()
         }
     }
 }
+
 
 extension UserDefaults {
     func set<T: Encodable>(encodable: T, forKey key: String) {
