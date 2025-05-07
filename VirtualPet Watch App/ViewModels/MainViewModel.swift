@@ -201,7 +201,7 @@ extension StatesViewModel {
     
     //VOLTAR PARA 12
     private func updateHungerLevel(_ timeSinceLastAction: TimeInterval) {
-        let hungerDecayAmount = timeSinceLastAction / (0.012 * 60 * 60) * 100.0
+        let hungerDecayAmount = timeSinceLastAction / (12 * 60 * 60) * 100.0
         hungerLevel = max(0.0, hungerLevel - hungerDecayAmount)
     }
     
