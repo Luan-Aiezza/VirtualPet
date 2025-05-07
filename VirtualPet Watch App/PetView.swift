@@ -1,24 +1,18 @@
 import SwiftUI
-import Combine
-import WatchKit
 
 struct ContentView: View {
-    
     @ObservedObject private var vm = StatesViewModel()
     
     var body: some View {
         GeometryReader { geo in
-            
-            ZStack (alignment: .leading){
-                
+            ZStack(alignment: .leading) {
                 // Barra lateral à esquerda
                 vm.handleCrownValueProgressBar()
                     .frame(width: geo.size.width / 7)
                 
                 HStack(spacing: 0) {
                     // Conteúdo centralizado: pet + botão
-                    VStack{
-                        
+                    VStack {
                         Spacer()
                         
                         Image(vm.currentAsset)
@@ -33,8 +27,6 @@ struct ContentView: View {
                         
                         vm.handleCrownValueButton()
                             .frame(width: geo.size.width/2, height: geo.size.height/7)
-                        
-                        
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
@@ -48,7 +40,7 @@ struct ContentView: View {
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
-                    .padding(.bottom, 40)//trocar
+                    .padding(.bottom, 40)
             )
         }
     }
@@ -60,20 +52,18 @@ struct ProgressBar: View {
     
     var body: some View {
         GeometryReader { geometry in
-            ZStack(alignment: .leading) {
+            ZStack(alignment: .bottom) {
                 RoundedRectangle(cornerSize: CGSize(width: 24, height: 24))
-                    .frame(
-                        width: geometry.size.width,
-                        height: geometry.size.height)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
                     .opacity(0.3)
                     .foregroundColor(color)
                 
                 RoundedRectangle(cornerSize: CGSize(width: 24, height: 24))
-                
                     .frame(
                         width: geometry.size.width,
-                        height: max(0, min(CGFloat(self.value) * geometry.size.width, geometry.size.height))
-                    )
+                        // O QUE LEVA NO LUGAR DO 4.75
+                        height: max(0, min(CGFloat(self.value) * geometry.size.width/4.75, geometry.size.height))
+                        )
                     .foregroundColor(color)
             }
         }.padding(.horizontal)
@@ -85,4 +75,3 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
-
