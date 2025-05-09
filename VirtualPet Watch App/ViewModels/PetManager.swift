@@ -74,12 +74,20 @@ class PetManager: ObservableObject {
     }
 
     func toggleSleep() {
-        sleepVM.toggleSleep()
-        animationController.updateSleepState(isSleeping: sleepVM.isSleeping, stage: evolutionManager.stage)
+        if sleepVM.canSleep() {
+            sleepVM.toggleSleep()
+            animationController.updateSleepState(isSleeping: sleepVM.isSleeping, stage: evolutionManager.stage)
+        } else {
+            animationController.playDenial(for: evolutionManager.stage)
+        }
     }
 
     func playWithPet() {
-        joyVM.play()
-        animationController.playPlaying(for: evolutionManager.stage)
+        if joyVM.canplay() {
+            joyVM.play()
+            animationController.playPlaying(for: evolutionManager.stage)
+        } else {
+            animationController.playDenial(for: evolutionManager.stage)
+        }
     }
 }

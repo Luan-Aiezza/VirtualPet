@@ -46,22 +46,30 @@ extension PetManager {
     func handleCrownValueButton() -> some View {
         switch crownVM.currentState {
         case .hunger:
-            Button("Alimentar") {
+            Button("Feed") {
                 self.feedPet()
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.bordered)
+            .colorMultiply(Color.yellow)
+            .bold(true)
         case .sleep:
-            Button(sleepVM.isSleeping ? "Acordar" : "Dormir") {
+            Button(sleepVM.isSleeping ? "Awake" : "Sleep") {
                 self.toggleSleep()
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.bordered)
+            .colorMultiply(Color.purple)
+            .bold(true)
         case .joy:
-            Button("Brincar") {
+            Button("Play") {
                 self.playWithPet()
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.bordered)
+            .colorMultiply(Color.green)
+            .bold(true)
+
         }
     }
 }
+
 
 

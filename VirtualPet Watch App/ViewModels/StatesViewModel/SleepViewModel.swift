@@ -9,7 +9,7 @@ class SleepViewModel: ObservableObject {
 
     func update(interval: TimeInterval, isSleeping: Bool) {
         if isSleeping {
-            sleep += interval / (16 * 3600) * 100
+            sleep += interval / (0.016 * 3600) * 100
             if sleep >= 100 {
                 sleep = 100
                 self.isSleeping = false
@@ -17,6 +17,10 @@ class SleepViewModel: ObservableObject {
         } else {
             sleep = max(0, sleep - interval / (16 * 3600) * 100)
         }
+    }
+    
+    func canSleep() -> Bool {
+        sleep < 25.0 // 2.5 de margem
     }
 
     func toggleSleep() {

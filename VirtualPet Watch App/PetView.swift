@@ -4,37 +4,29 @@ import WatchKit
 
 struct ContentView: View {
     @StateObject private var petManager = PetManager()
-
+    
     var body: some View {
-        GeometryReader { geo in
-            ZStack(alignment: .leading) {
-                // Barra lateral à esquerda (por exemplo, barra de fome)
-                // Aqui você pode manter o ProgressBar conforme necessário:
-                ProgressBar(value: petManager.hungerVM.hunger, color: .green)
-                    .frame(width: geo.size.width / 7)
-
-                HStack(spacing: 0) {
-                    VStack {
-                        Spacer()
-
-                        // Exibe a imagem do pet, de preferência controlada pelo seu animationController
-                        Image(petManager.animationController.currentAsset)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxHeight: geo.size.height * 0.6)
-                            .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
-                                // Atualize estados do pet conforme a lógica do PetManager
-                                petManager.updateState()
-                            }
-                        
-                        petManager.handleCrownValueButton()
-                            .padding(.bottom)
-
-                        Spacer()
-
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+        
+        ZStack(alignment: .leading) {
+            
+            GeometryReader { geo in
+                
+                progressBarForCurrentState(width: geo.size.width * 0.15)
+                
+                VStack {
+                    Spacer()
+                    Image(petManager.animationController.currentAsset)
+                        .resizable()
+                        .border(.red)
+                        .scaledToFit()
+                        .frame(maxHeight: geo.size.height * 0.6)
+                        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+                            petManager.updateState()
+                        }
+                    Spacer()
                 }
+                .ignoresSafeArea()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .focusable()
                 .digitalCrownRotation($petManager.crownVM.crownValue,
                                       from: 0,
@@ -47,16 +39,43 @@ struct ContentView: View {
                 .onDisappear {
                     petManager.stopTimer()
                 }
-            }
-            .background(
+                
+                VStack{
+                    Spacer()
+                    petManager.handleCrownValueButton()
+                        .frame(width: geo.size.width/2, height: geo.size.height/2)
+                }
+                .ignoresSafeArea()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .focusable()
+                
+            }.background(
                 Image(backgroundImage(for: petManager.crownVM.currentState))
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
-                    .padding(.bottom, 40)
+                    .padding(.bottom)
             )
+            
         }
     }
+    
+    // MARK: - Helper: barra de progresso baseada no estado atual da coroa
+    @ViewBuilder
+    private func progressBarForCurrentState(width: CGFloat) -> some View {
+        switch petManager.crownVM.currentState {
+        case .hunger:
+            ProgressBar(value: petManager.hungerVM.hunger, color: .yellow)
+                .frame(width: width)
+        case .sleep:
+            ProgressBar(value: petManager.sleepVM.sleep, color: .purple)
+                .frame(width: width)
+        case .joy:
+            ProgressBar(value: petManager.joyVM.joy, color: .green)
+                .frame(width: width)
+        }
+    }
+    
     func backgroundImage(for state: CrownState) -> String {
         switch state {
         case .hunger: return "Kitchen"
@@ -64,30 +83,38 @@ struct ContentView: View {
         case .joy: return "Room"
         }
     }
+    
 }
 
+
+
 struct ProgressBar: View {
-    var value: Double
+    var value: Double  // Esperado entre 0.0 e 1.0
     var color: Color
     
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .bottom) {
+                // Barra de fundo (limite total)
                 RoundedRectangle(cornerSize: CGSize(width: 24, height: 24))
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .opacity(0.3)
                     .foregroundColor(color)
                 
+                // Barra de progresso proporcional
                 RoundedRectangle(cornerSize: CGSize(width: 24, height: 24))
                     .frame(
                         width: geometry.size.width,
-                        // Por exemplo, ajustando a altura proporcionalmente
-                        height: max(0, min(CGFloat(value) * geometry.size.width/4.75, geometry.size.height))
+                        height: geometry.size.height * CGFloat(clamp(value/100))
                     )
                     .foregroundColor(color)
             }
         }
         .padding(.horizontal)
+    }
+    
+    private func clamp(_ value: Double) -> Double {
+        return min(max(value, 0.0), 1.0)
     }
 }
 
