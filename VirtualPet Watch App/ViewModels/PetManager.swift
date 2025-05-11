@@ -49,11 +49,18 @@ class PetManager: ObservableObject {
         timer = nil
     }
 
+    
     public func updateState() {
         let now = Date()
         let interval = now.timeIntervalSince(lifeManager.lastActionTime)
         lifeManager.lastActionTime = now
 
+        if sleepVM.isSleeping {
+            animationController.startSleepAnimation()
+        } else {
+            animationController.startIdleAnimation()
+        }
+        
         hungerVM.update(interval: interval)
         sleepVM.update(interval: interval, isSleeping: sleepVM.isSleeping)
         joyVM.update(interval: interval)
@@ -68,16 +75,21 @@ class PetManager: ObservableObject {
         if hungerVM.canFeed() {
             hungerVM.feed()
             animationController.playFeeding(for: evolutionManager.stage)
-        } else {
-            animationController.playDenial(for: evolutionManager.stage)
         }
     }
 
     func toggleSleep() {
-        if sleepVM.canSleep() {
+        if sleepVM.isSleeping {
+            // Acordar sempre é permitido
+            sleepVM.toggleSleep()
+            animationController.updateSleepState(isSleeping: sleepVM.isSleeping, stage: evolutionManager.stage)
+        } else if sleepVM.canSleep() {
+            // Pode dormir se estiver abaixo de 25
+            
             sleepVM.toggleSleep()
             animationController.updateSleepState(isSleeping: sleepVM.isSleeping, stage: evolutionManager.stage)
         } else {
+            // Se não pode dormir e não está dormindo, nega
             animationController.playDenial(for: evolutionManager.stage)
         }
     }
@@ -86,8 +98,9 @@ class PetManager: ObservableObject {
         if joyVM.canplay() {
             joyVM.play()
             animationController.playPlaying(for: evolutionManager.stage)
-        } else {
-            animationController.playDenial(for: evolutionManager.stage)
         }
+//        else {
+//            animationController.playDenial(for: evolutionManager.stage)
+//        }
     }
 }

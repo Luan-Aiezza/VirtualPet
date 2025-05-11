@@ -50,22 +50,26 @@ extension PetManager {
                 self.feedPet()
             }
             .buttonStyle(.bordered)
-            .colorMultiply(Color.yellow)
+            .tint(Color.yellow)
             .bold(true)
+            .disabled(sleepVM.isSleeping || !hungerVM.canFeed())
+            
         case .sleep:
             Button(sleepVM.isSleeping ? "Awake" : "Sleep") {
                 self.toggleSleep()
             }
             .buttonStyle(.bordered)
-            .colorMultiply(Color.purple)
+            .tint(Color.purple)
             .bold(true)
+            
         case .joy:
             Button("Play") {
                 self.playWithPet()
             }
             .buttonStyle(.bordered)
-            .colorMultiply(Color.green)
+            .tint(Color.green)
             .bold(true)
+            .disabled(sleepVM.isSleeping || !joyVM.canplay())
 
         }
     }

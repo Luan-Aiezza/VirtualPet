@@ -12,15 +12,15 @@ class SleepViewModel: ObservableObject {
             sleep += interval / (0.016 * 3600) * 100
             if sleep >= 100 {
                 sleep = 100
-                self.isSleeping = false
+                //self.isSleeping = false
             }
         } else {
-            sleep = max(0, sleep - interval / (16 * 3600) * 100)
+            sleep = max(0, sleep - interval / (0.016 * 3600) * 100)
         }
     }
     
     func canSleep() -> Bool {
-        sleep < 25.0 // 2.5 de margem
+        sleep < 25.0// 2.5 de margem
     }
 
     func toggleSleep() {

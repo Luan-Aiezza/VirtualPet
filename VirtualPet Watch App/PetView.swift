@@ -17,7 +17,6 @@ struct ContentView: View {
                     Spacer()
                     Image(petManager.animationController.currentAsset)
                         .resizable()
-                        .border(.red)
                         .scaledToFit()
                         .frame(maxHeight: geo.size.height * 0.6)
                         .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
@@ -39,11 +38,10 @@ struct ContentView: View {
                 .onDisappear {
                     petManager.stopTimer()
                 }
-                
                 VStack{
                     Spacer()
                     petManager.handleCrownValueButton()
-                        .frame(width: geo.size.width/2, height: geo.size.height/2)
+                        .frame(width: geo.size.width/2.5, height: geo.size.height/2.5)
                 }
                 .ignoresSafeArea()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
