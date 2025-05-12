@@ -78,11 +78,17 @@ class PetManager: ObservableObject {
     func toggleSleep() {
         let canSleep = sleepVM.canSleep()
         let wasSleeping = sleepVM.isSleeping
-        sleepVM.toggleSleep()
 
-        animationController.updateSleepState(isSleeping: sleepVM.isSleeping, stage: evolutionManager.stage)
-
-        if !canSleep && !wasSleeping {
+        if wasSleeping {
+            // Acordar o pet mesmo que não possa "dormir"
+            sleepVM.toggleSleep()
+            animationController.updateSleepState(isSleeping: false, stage: evolutionManager.stage)
+        } else if canSleep {
+            // Dormir apenas se puder
+            sleepVM.toggleSleep()
+            animationController.updateSleepState(isSleeping: true, stage: evolutionManager.stage)
+        } else {
+            // Não pode dormir e estava acordado → negar
             animationController.playDenial(for: evolutionManager.stage)
         }
     }

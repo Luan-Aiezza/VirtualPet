@@ -17,7 +17,6 @@ struct ContentView: View {
                 VStack {
                     Spacer()
                     SpriteView(scene: petManager.animationController.currentScene!)
-                        .scaledToFit()
                         .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
                             petManager.updateState()
                         }
