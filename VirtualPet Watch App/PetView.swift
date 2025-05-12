@@ -84,8 +84,6 @@ struct ContentView: View {
     
 }
 
-
-
 struct ProgressBar: View {
     var value: Double  // Esperado entre 0.0 e 1.0
     var color: Color

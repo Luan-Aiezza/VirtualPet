@@ -7,7 +7,7 @@ extension UserDefaults {
             set(data, forKey: key)
         }
     }
-    
+
     func get<T: Decodable>(_ type: T.Type, forKey key: String) -> T? {
         if let data = object(forKey: key) as? Data,
            let value = try? JSONDecoder().decode(type, from: data) {
@@ -18,11 +18,15 @@ extension UserDefaults {
 }
 
 extension PetManager {
+    enum PetNeedState: String, Codable {
+        case sleepy, hungry, sad, idle
+    }
+
     public func loadState() {
         hungerVM.hunger = UserDefaults.standard.double(forKey: "hunger")
         sleepVM.sleep = UserDefaults.standard.double(forKey: "sleep")
         joyVM.joy = UserDefaults.standard.double(forKey: "joy")
-        
+
         if let birthDate = UserDefaults.standard.object(forKey: "birthDate") as? Date {
             lifeManager.birthDate = birthDate
         }
@@ -30,6 +34,8 @@ extension PetManager {
         if let lastActionTime = UserDefaults.standard.object(forKey: "lastActionTime") as? Date {
             lifeManager.lastActionTime = lastActionTime
         }
+
+        evaluatePriority() // garante estado visual inicial
     }
 
     public func saveState() {
@@ -38,6 +44,34 @@ extension PetManager {
         UserDefaults.standard.set(joyVM.joy, forKey: "joy")
         UserDefaults.standard.set(lifeManager.birthDate, forKey: "birthDate")
         UserDefaults.standard.set(lifeManager.lastActionTime, forKey: "lastActionTime")
+    }
+
+    private func determinePriorityState() -> PetNeedState {
+        if sleepVM.sleep < 25.0 {
+            return .sleepy
+        } else if hungerVM.hunger < 25.0 {
+            return .hungry
+        } else if joyVM.joy < 25.0 {
+            return .sad
+        } else {
+            return .idle
+        }
+    }
+
+    func evaluatePriority() {
+        let state = determinePriorityState()
+
+        switch state {
+        case .sleepy:
+            animationController.startDrowsyAnimationLoop(stage: evolutionManager.stage)
+        case .hungry:
+            animationController.startHungryAnimationLoop(stage: evolutionManager.stage)
+        case .sad:
+            animationController.startSadAnimationLoop(stage: evolutionManager.stage)
+        case .idle:
+            animationController.resetToIdle()
+            animationController.startIdleAnimation()
+        }
     }
 }
 
@@ -53,7 +87,7 @@ extension PetManager {
             .tint(Color.yellow)
             .bold(true)
             .disabled(sleepVM.isSleeping || !hungerVM.canFeed())
-            
+
         case .sleep:
             Button(sleepVM.isSleeping ? "Awake" : "Sleep") {
                 self.toggleSleep()
@@ -61,7 +95,7 @@ extension PetManager {
             .buttonStyle(.bordered)
             .tint(Color.purple)
             .bold(true)
-            
+
         case .joy:
             Button("Play") {
                 self.playWithPet()
@@ -70,7 +104,6 @@ extension PetManager {
             .tint(Color.green)
             .bold(true)
             .disabled(sleepVM.isSleeping || !joyVM.canplay())
-
         }
     }
 }
