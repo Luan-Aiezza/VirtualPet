@@ -1,197 +1,131 @@
-import SwiftUI
-import Combine
-import WatchKit
 import Foundation
+import SpriteKit
+import Combine
 
 class PetAnimationController: ObservableObject {
-    @Published var currentAsset: String = "WhiteCatIdle(Baby)1"
-    
-    private var sleepFrameIndex = 1
-    private var idleFrameIndex = 1
+    @Published var currentScene: SKScene?
 
-    private var isDrowsy = false
-    private var isSad = false
-    private var isHungry = false
-    private var isSleeping = false
-    private var isPlayingOtherAnimation = false
+    private var petNode = SKSpriteNode(imageNamed: "WhiteCatIdle(Baby)1")
+    private var animationTextures: [String: [SKTexture]] = [:]
+    private var currentLoopKey: String?
 
-    private var animationTimer: Timer?
-    private var stage: PetEvolutionStage = .baby
-
-    private enum PetMood {
-        case drowsy, sad, hungry, idle
+    init() {
+        setupScene(stage: .baby)
     }
 
-    deinit {
-        animationTimer?.invalidate()
+    func setupScene(stage: PetEvolutionStage) {
+        let scene = SKScene(size: CGSize(width: 184, height: 224))
+        scene.scaleMode = .aspectFit
+        scene.backgroundColor = .clear
+
+        petNode.removeAllActions()
+        petNode.removeFromParent()
+        petNode = SKSpriteNode(imageNamed: "WhiteCatIdle(\(stage.rawValue))1") // fallback image
+        petNode.position = CGPoint(x: scene.size.width / 2, y: scene.size.height / 2)
+        petNode.zPosition = 1
+        petNode.alpha = 1.0
+        petNode.isHidden = false
+
+        scene.addChild(petNode)
+        currentScene = scene
+
+        preloadAnimations(for: stage)
+
+        print("✅ Scene initialized for stage \(stage.rawValue)")
+        print("🐾 PetNode position: \(petNode.position), alpha: \(petNode.alpha), hidden: \(petNode.isHidden)")
     }
 
-    private func updateStateAnimations() {
-        stopCurrentAnimation()
+    private func preloadAnimations(for stage: PetEvolutionStage) {
+        let actionsWithCounts: [String: Int] = [
+            "Idle": 4,
+            "Feed": 8,
+            "Playing": 7,
+            "Sleep": 4,
+            "Drowsy": 4,
+            "Sad": 5,
+            "Hungry": 4,
+            "Denying": 3
+        ]
 
-        guard !isSleeping && !isPlayingOtherAnimation else { return }
-
-        let currentMood: PetMood = {
-            if isDrowsy { return .drowsy }
-            if isSad { return .sad }
-            if isHungry { return .hungry }
-            return .idle
-        }()
-
-        switch currentMood {
-        case .drowsy:
-            startLoopedAnimation(prefix: "WhiteCatDrowsy", frameCount: 4)
-        case .sad:
-            startLoopedAnimation(prefix: "WhiteCatSad", frameCount: 5)
-        case .hungry:
-            startLoopedAnimation(prefix: "WhiteCatHungry", frameCount: 4)
-        case .idle:
-            startIdleAnimation()
+        for (action, count) in actionsWithCounts {
+            var textures: [SKTexture] = []
+            for i in 1...count {
+                let name = "WhiteCat\(action)(\(stage.rawValue))\(i)"
+                if let image = UIImage(named: name) {
+                    textures.append(SKTexture(image: image))
+                } else {
+                    print("⚠️ Missing texture: \(name)")
+                }
+            }
+            animationTextures[action] = textures
         }
     }
 
-    private func startLoopedAnimation(prefix: String, frameCount: Int) {
-        stopCurrentAnimation()
-        var frameIndex = 1
-        animationTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { [weak self] _ in
-            guard let self = self, !self.isSleeping, !self.isPlayingOtherAnimation else {
-                self?.animationTimer?.invalidate()
-                return
-            }
-            self.currentAsset = "\(prefix)(\(self.stage.rawValue))\(frameIndex)"
-            frameIndex = (frameIndex % frameCount) + 1
+    private func runAnimation(named name: String, loop: Bool = true) {
+        guard let textures = animationTextures[name], !textures.isEmpty else {
+            print("⚠️ No textures for animation: \(name)")
+            return
+        }
+
+        petNode.removeAllActions()
+        currentLoopKey = name
+
+        let action = SKAction.animate(with: textures, timePerFrame: 0.15, resize: false, restore: false)
+        if loop {
+            petNode.run(SKAction.repeatForever(action), withKey: name)
+        } else {
+            petNode.run(action, withKey: name)
+        }
+
+        print("▶️ Running animation: \(name) loop: \(loop)")
+    }
+
+    func resetToIdle() {
+        runAnimation(named: "Idle", loop: true)
+    }
+
+    func startIdleAnimation(stage: PetEvolutionStage) {
+        runAnimation(named: "Idle", loop: true)
+    }
+
+    func startDrowsyAnimationLoop(stage: PetEvolutionStage) {
+        runAnimation(named: "Drowsy", loop: true)
+    }
+
+    func startHungryAnimationLoop(stage: PetEvolutionStage) {
+        runAnimation(named: "Hungry", loop: true)
+    }
+
+    func startSadAnimationLoop(stage: PetEvolutionStage) {
+        runAnimation(named: "Sad", loop: true)
+    }
+
+    func playFeeding(for stage: PetEvolutionStage) {
+        runAnimation(named: "Feed", loop: false)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            self.resetToIdle()
+        }
+    }
+
+    func playPlaying(for stage: PetEvolutionStage) {
+        runAnimation(named: "Playing", loop: false)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            self.resetToIdle()
+        }
+    }
+
+    func playDenial(for stage: PetEvolutionStage) {
+        runAnimation(named: "Denying", loop: false)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.resetToIdle()
         }
     }
 
     func updateSleepState(isSleeping: Bool, stage: PetEvolutionStage) {
-        self.stage = stage
-        let wasSleeping = self.isSleeping
-        self.isSleeping = isSleeping
-
-        if wasSleeping != isSleeping {
-            stopCurrentAnimation()
-            if isSleeping {
-                startSleepAnimation()
-            } else {
-                updateStateAnimations()
-            }
-        }
-    }
-
-    private func stopCurrentAnimation() {
-        animationTimer?.invalidate()
-        animationTimer = nil
-    }
-
-    public func resetToIdle() {
-        currentAsset = "WhiteCatIdle(\(stage.rawValue))1"
-        idleFrameIndex = 1
-    }
-
-    func startDrowsyAnimationLoop(stage: PetEvolutionStage) {
-        guard !isSleeping, !isPlayingOtherAnimation, !isDrowsy else { return }
-        self.stage = stage
-        isDrowsy = true
-        updateStateAnimations()
-    }
-
-    func stopDrowsyAnimationLoop() {
-        isDrowsy = false
-        updateStateAnimations()
-    }
-
-    func startHungryAnimationLoop(stage: PetEvolutionStage) {
-        guard !isSleeping, !isPlayingOtherAnimation else { return }
-        self.stage = stage
-        isHungry = true
-        updateStateAnimations()
-    }
-
-    func stopHungryAnimationLoop() {
-        isHungry = false
-        updateStateAnimations()
-    }
-
-    func startSadAnimationLoop(stage: PetEvolutionStage) {
-        guard !isSleeping, !isPlayingOtherAnimation else { return }
-        self.stage = stage
-        isSad = true
-        updateStateAnimations()
-    }
-
-    func stopSadAnimationLoop() {
-        isSad = false
-        updateStateAnimations()
-    }
-
-    public func startSleepAnimation() {
-        guard isSleeping && !isPlayingOtherAnimation else { return }
-
-        stopCurrentAnimation()
-
-        animationTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { [weak self] _ in
-            guard let self = self, self.isSleeping, !self.isPlayingOtherAnimation else {
-                self?.animationTimer?.invalidate()
-                return
-            }
-
-            self.currentAsset = "WhiteCatSleep(\(self.stage.rawValue))\(self.sleepFrameIndex)"
-            self.sleepFrameIndex = (self.sleepFrameIndex % 4) + 1
-        }
-    }
-
-    public func startIdleAnimation() {
-        guard !isSleeping && !isPlayingOtherAnimation else { return }
-
-        stopCurrentAnimation()
-
-        animationTimer = Timer.scheduledTimer(withTimeInterval: 0.15, repeats: true) { [weak self] _ in
-            guard let self = self, !self.isSleeping, !self.isPlayingOtherAnimation else {
-                self?.animationTimer?.invalidate()
-                return
-            }
-
-            let nextFrameIndex = (self.idleFrameIndex == 1) ? 2 : 1
-            self.currentAsset = "WhiteCatIdle(\(self.stage.rawValue))\(self.idleFrameIndex)"
-            self.idleFrameIndex = nextFrameIndex
-        }
-    }
-
-    func playFeeding(for stage: PetEvolutionStage) {
-        playTemporaryAnimation(animationName: "Feed", frameCount: 8, stage: stage)
-    }
-
-    func playPlaying(for stage: PetEvolutionStage) {
-        playTemporaryAnimation(animationName: "Playing", frameCount: 7, stage: stage)
-    }
-
-    func playDenial(for stage: PetEvolutionStage) {
-        playTemporaryAnimation(animationName: "Denying", frameCount: 3, stage: stage)
-    }
-
-    private func playTemporaryAnimation(animationName: String, frameCount: Int, stage: PetEvolutionStage) {
-        isSleeping = false
-        isPlayingOtherAnimation = true
-
-        stopCurrentAnimation()
-
-        var currentFrameIndex = 1
-        let frames = (1...frameCount).map { "WhiteCat\(animationName)(\(stage.rawValue))\($0)" }
-
-        animationTimer = Timer.scheduledTimer(withTimeInterval: 0.15, repeats: true) { [weak self] timer in
-            guard let self = self else {
-                timer.invalidate()
-                return
-            }
-
-            if currentFrameIndex <= frameCount {
-                self.currentAsset = frames[currentFrameIndex - 1]
-                currentFrameIndex += 1
-            } else {
-                timer.invalidate()
-                self.isPlayingOtherAnimation = false
-                self.updateStateAnimations()
-            }
+        if isSleeping {
+            runAnimation(named: "Sleep", loop: true)
+        } else {
+            resetToIdle()
         }
     }
 }

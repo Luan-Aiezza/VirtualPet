@@ -22,30 +22,6 @@ extension PetManager {
         case sleepy, hungry, sad, idle
     }
 
-    public func loadState() {
-        hungerVM.hunger = UserDefaults.standard.double(forKey: "hunger")
-        sleepVM.sleep = UserDefaults.standard.double(forKey: "sleep")
-        joyVM.joy = UserDefaults.standard.double(forKey: "joy")
-
-        if let birthDate = UserDefaults.standard.object(forKey: "birthDate") as? Date {
-            lifeManager.birthDate = birthDate
-        }
-
-        if let lastActionTime = UserDefaults.standard.object(forKey: "lastActionTime") as? Date {
-            lifeManager.lastActionTime = lastActionTime
-        }
-
-        evaluatePriority() // garante estado visual inicial
-    }
-
-    public func saveState() {
-        UserDefaults.standard.set(hungerVM.hunger, forKey: "hunger")
-        UserDefaults.standard.set(sleepVM.sleep, forKey: "sleep")
-        UserDefaults.standard.set(joyVM.joy, forKey: "joy")
-        UserDefaults.standard.set(lifeManager.birthDate, forKey: "birthDate")
-        UserDefaults.standard.set(lifeManager.lastActionTime, forKey: "lastActionTime")
-    }
-
     private func determinePriorityState() -> PetNeedState {
         if sleepVM.sleep < 25.0 {
             return .sleepy
@@ -58,21 +34,6 @@ extension PetManager {
         }
     }
 
-    func evaluatePriority() {
-        let state = determinePriorityState()
-
-        switch state {
-        case .sleepy:
-            animationController.startDrowsyAnimationLoop(stage: evolutionManager.stage)
-        case .hungry:
-            animationController.startHungryAnimationLoop(stage: evolutionManager.stage)
-        case .sad:
-            animationController.startSadAnimationLoop(stage: evolutionManager.stage)
-        case .idle:
-            animationController.resetToIdle()
-            animationController.startIdleAnimation()
-        }
-    }
 }
 
 extension PetManager {

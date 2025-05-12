@@ -1,6 +1,7 @@
 import SwiftUI
 import Combine
 import WatchKit
+import SpriteKit
 
 struct ContentView: View {
     @StateObject private var petManager = PetManager()
@@ -15,10 +16,8 @@ struct ContentView: View {
                 
                 VStack {
                     Spacer()
-                    Image(petManager.animationController.currentAsset)
-                        .resizable()
+                    SpriteView(scene: petManager.animationController.currentScene!)
                         .scaledToFit()
-                        .frame(maxHeight: geo.size.height * 0.6)
                         .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
                             petManager.updateState()
                         }
