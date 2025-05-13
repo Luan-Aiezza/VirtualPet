@@ -13,11 +13,11 @@ class PetAnimationController: ObservableObject {
     private let frameRates: [String: Double] = [
         "Idle": 0.15,
         "Feed": 0.2,
-        "Playing": 0.1,
-        "Sleep": 0.2,
-        "Drowsy": 0.2,
+        "Playing": 0.15,
+        "Sleep": 0.25,
+        "Drowsy": 0.25,
         "Sad": 0.25,
-        "Hungry": 0.25,
+        "Hungry": 0.3,
         "Denying": 0.3
     ]
 

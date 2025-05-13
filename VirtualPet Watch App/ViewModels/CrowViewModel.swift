@@ -9,8 +9,8 @@ class CrownViewModel: ObservableObject {
     var currentState: CrownState {
         switch Int(crownValue) {
         case 0: return .hunger
-        case 1: return .sleep
-        case 2: return .joy
+        case 1: return .joy
+        case 2: return .sleep
         default: return .joy
         }
     }

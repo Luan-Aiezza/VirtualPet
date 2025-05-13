@@ -63,11 +63,13 @@ struct ContentView: View {
         case .hunger:
             ProgressBar(value: petManager.hungerVM.hunger, color: .yellow)
                 .frame(width: width)
-        case .sleep:
-            ProgressBar(value: petManager.sleepVM.sleep, color: .purple)
-                .frame(width: width)
+
         case .joy:
             ProgressBar(value: petManager.joyVM.joy, color: .green)
+                .frame(width: width)
+            
+        case .sleep:
+            ProgressBar(value: petManager.sleepVM.sleep, color: .purple)
                 .frame(width: width)
         }
     }
