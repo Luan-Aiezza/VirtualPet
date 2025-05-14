@@ -11,11 +11,11 @@ class PetAnimationController: ObservableObject {
     private var currentLoopKey: String?
 
     private let frameRates: [String: Double] = [
-        "Idle": 0.15,
+        "Idle": 0.10,
         "Feed": 0.2,
         "Playing": 0.15,
-        "Sleep": 0.25,
-        "Drowsy": 0.25,
+        "Sleep": 0.20,
+        "Drowsy": 0.20,
         "Sad": 0.25,
         "Hungry": 0.3,
         "Denying": 0.3
@@ -44,9 +44,6 @@ class PetAnimationController: ObservableObject {
         currentScene = scene
 
         preloadAnimations(for: stage)
-
-        print("✅ Scene initialized for stage \(stage.rawValue)")
-        print("🐾 PetNode position: \(petNode.position), alpha: \(petNode.alpha), hidden: \(petNode.isHidden)")
     }
 
     private func preloadAnimations(for stage: PetEvolutionStage) {
@@ -105,8 +102,6 @@ class PetAnimationController: ObservableObject {
             let sequence = SKAction.sequence([action, completion])
             petNode.run(sequence, withKey: name)
         }
-
-        print("▶️ Running animation: \(name) | loop: \(loop) | timePerFrame: \(timePerFrame)")
     }
 
     func resetToIdle() {

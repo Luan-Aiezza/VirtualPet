@@ -4,10 +4,10 @@ import WatchKit
 import Foundation
 
 class JoyViewModel: ObservableObject {
-    @Published var joy: Double = 30.0
+    @Published var joy: Double = 25.0
 
     func update(interval: TimeInterval) {
-        joy = max(0, joy - interval / (0.024 * 3600) * 100)
+        joy = max(0, joy - interval / (24 * 3600) * 100)
     }
 
     func play() {

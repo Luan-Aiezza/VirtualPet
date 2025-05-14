@@ -4,11 +4,11 @@ import WatchKit
 import Foundation
 
 class HungerViewModel: ObservableObject {
-    @Published var hunger: Double = 30.0
+    @Published var hunger: Double = 25.0
     
     
     func update(interval: TimeInterval) {
-        let decay = interval / (0.012 * 3600) * 100
+        let decay = interval / (12 * 3600) * 100
         hunger = max(0, hunger - decay)
     }
 

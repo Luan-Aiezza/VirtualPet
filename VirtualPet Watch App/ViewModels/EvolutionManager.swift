@@ -8,7 +8,7 @@ class EvolutionManager: ObservableObject {
 
     func updateStage(birthDate: Date) {
         let months = Calendar.current.dateComponents([.month], from: birthDate, to: Date()).month ?? 0
-        if months >= 4 {
+        if months >= 2 {
             stage = .adult
         } else if months >= 1 {
             stage = .children
