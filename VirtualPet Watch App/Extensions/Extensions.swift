@@ -50,7 +50,7 @@ extension PetManager {
             .disabled(sleepVM.isSleeping || !hungerVM.canFeed())
 
         case .sleep:
-            Button(sleepVM.isSleeping ? "Awake" : "Sleep") {
+            Button(/*sleepVM.isSleeping ?*/ "Awake" /*: "Sleep"*/) {
                 self.toggleSleep()
             }
             .buttonStyle(.bordered)

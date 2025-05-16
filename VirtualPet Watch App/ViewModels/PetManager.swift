@@ -64,6 +64,7 @@ class PetManager: ObservableObject {
         evolutionManager.updateStage(birthDate: lifeManager.birthDate)
         lifeManager.checkDeath(hunger: hungerVM.hunger, sleep: sleepVM.sleep, joy: joyVM.joy)
 
+        evaluateSleepAutomatically()
         evaluatePriority()
         saveState()
     }
@@ -76,20 +77,28 @@ class PetManager: ObservableObject {
     }
 
     func toggleSleep() {
-        let canSleep = sleepVM.canSleep()
+//        let canSleep = sleepVM.canSleep()
         let wasSleeping = sleepVM.isSleeping
 
         if wasSleeping {
             // Acordar o pet mesmo que não possa "dormir"
             sleepVM.toggleSleep()
             animationController.updateSleepState(isSleeping: false, stage: evolutionManager.stage)
-        } else if canSleep {
-            // Dormir apenas se puder
+        }
+//        else if canSleep {
+//            // Dormir apenas se puder
+//            sleepVM.toggleSleep()
+//            animationController.updateSleepState(isSleeping: true, stage: evolutionManager.stage)
+//        } else {
+//            // Não pode dormir e estava acordado → negar
+//            animationController.playDenial(for: evolutionManager.stage)
+//        }
+    }
+    
+    func evaluateSleepAutomatically() {
+        if !sleepVM.isSleeping && sleepVM.shouldStartSleeping() {
             sleepVM.toggleSleep()
             animationController.updateSleepState(isSleeping: true, stage: evolutionManager.stage)
-        } else {
-            // Não pode dormir e estava acordado → negar
-            animationController.playDenial(for: evolutionManager.stage)
         }
     }
 
