@@ -8,7 +8,7 @@ class HungerViewModel: ObservableObject {
     
     
     func update(interval: TimeInterval) {
-        let decay = interval / (0.012 * 3600) * 100
+        let decay = interval / (12 * 3600) * 100
         hunger = max(0, hunger - decay)
     }
 
