@@ -28,6 +28,14 @@ class PetManager: ObservableObject {
     deinit { stopTimer() }
 
     private func bindViewModels() {
+        
+        sleepVM.sleepDataManager.$isUserInSleepMode
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] inSleepMode in
+                self?.handleUserSleepModeChange(isSleeping: inSleepMode)
+            }
+            .store(in: &cancellables)
+        
         hungerVM.objectWillChange
             .merge(with: sleepVM.objectWillChange,
                    joyVM.objectWillChange,
@@ -40,6 +48,23 @@ class PetManager: ObservableObject {
             }
             .store(in: &cancellables)
     }
+    
+    private func handleUserSleepModeChange(isSleeping: Bool) {
+        let canSleep = sleepVM.canSleep()
+
+        if isSleeping && !sleepVM.isSleeping && canSleep {
+            // Entrar em sono automático via modo sono
+            sleepVM.isSleeping = true
+            animationController.updateSleepState(isSleeping: true, stage: evolutionManager.stage)
+            print("🌙 Pet entrou em sono via modo sono do Apple Watch")
+        } else if !isSleeping && sleepVM.isSleeping {
+            // Acordar automaticamente ao sair do modo sono
+            sleepVM.isSleeping = false
+            animationController.updateSleepState(isSleeping: false, stage: evolutionManager.stage)
+            print("☀️ Pet acordou automaticamente via fim do modo sono")
+        }
+    }
+
 
     public func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
@@ -64,7 +89,7 @@ class PetManager: ObservableObject {
         evolutionManager.updateStage(birthDate: lifeManager.birthDate)
         lifeManager.checkDeath(hunger: hungerVM.hunger, sleep: sleepVM.sleep, joy: joyVM.joy)
 
-        evaluateSleepAutomatically()
+//        evaluateSleepAutomatically()
         evaluatePriority()
         saveState()
     }
@@ -95,12 +120,12 @@ class PetManager: ObservableObject {
 //        }
     }
     
-    func evaluateSleepAutomatically() {
-        if !sleepVM.isSleeping && sleepVM.shouldStartSleeping() {
-            sleepVM.toggleSleep()
-            animationController.updateSleepState(isSleeping: true, stage: evolutionManager.stage)
-        }
-    }
+//    func evaluateSleepAutomatically() {
+//        if !sleepVM.isSleeping && sleepVM.shouldStartSleeping() {
+//            sleepVM.toggleSleep()
+//            animationController.updateSleepState(isSleeping: true, stage: evolutionManager.stage)
+//        }
+//    }
 
     func playWithPet() {
         if joyVM.canplay() {

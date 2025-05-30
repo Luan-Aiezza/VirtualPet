@@ -8,6 +8,27 @@ class SleepViewModel: ObservableObject {
     @Published var isSleeping: Bool = false
     @Published var sleepDataManager = SleepDataManager()
 
+    private var cancellables: Set<AnyCancellable> = []
+
+    init() {
+        sleepDataManager.$isUserInSleepMode
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] inSleepMode in
+                self?.handleSleepStateChange(isSleeping: inSleepMode)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func handleSleepStateChange(isSleeping: Bool) {
+        if isSleeping && self.canSleep() {
+            self.isSleeping = true
+            print("Pet começou a dormir via modo sono")
+        } else if !isSleeping && self.isSleeping {
+            self.isSleeping = false
+            print("Pet acordou automaticamente")
+        }
+    }
+
     func update(interval: TimeInterval, isSleeping: Bool) {
         if isSleeping {
             let targetDuration = sleepDataManager.averageSleepDuration
@@ -20,22 +41,14 @@ class SleepViewModel: ObservableObject {
         }
     }
 
-    func shouldStartSleeping() -> Bool {
-        let now = Calendar.current.dateComponents([.hour, .minute], from: Date())
-        let bedtime = sleepDataManager.averageBedtime
-
-        guard let nowHour = now.hour, let bedtimeHour = bedtime.hour else { return false }
-
-        // Se está dentro de 1h antes ou depois do horário médio
-        let difference = abs(nowHour - bedtimeHour)
-        return difference <= 1 && canSleep()
-    }
-
     func canSleep() -> Bool {
         sleep < 25.0
     }
 
+    // Só permite o usuário acordar manualmente
     func toggleSleep() {
-        isSleeping.toggle()
+        if isSleeping {
+            isSleeping = false
+        }
     }
 }

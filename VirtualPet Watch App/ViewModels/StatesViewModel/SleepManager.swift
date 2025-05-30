@@ -1,25 +1,68 @@
 import HealthKit
-import Foundation
+import Combine
 
 class SleepDataManager: ObservableObject {
     private let healthStore = HKHealthStore()
-    @Published var averageSleepDuration: TimeInterval = 8 * 3600 // fallback 8h
-    @Published var averageBedtime: DateComponents = DateComponents(hour: 23) // fallback 23h
+    private var observerQuery: HKObserverQuery?
+    @Published var isUserInSleepMode: Bool = false
+    @Published var averageSleepDuration: TimeInterval = 8 * 3600
+    @Published var averageBedtime: DateComponents = DateComponents(hour: 23)
 
     init() {
         requestAuthorization()
     }
 
     func requestAuthorization() {
-        let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
+        guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else { return }
 
         healthStore.requestAuthorization(toShare: [], read: [sleepType]) { success, error in
             if success {
+                self.startObservingSleepChanges()
                 self.fetchSleepData()
             } else {
-                print("HealthKit authorization failed: \(error?.localizedDescription ?? "Unknown error")")
+                print("🚫 HealthKit auth failed: \(error?.localizedDescription ?? "Unknown error")")
             }
         }
+    }
+
+    func startObservingSleepChanges() {
+        guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else { return }
+
+        observerQuery = HKObserverQuery(sampleType: sleepType, predicate: nil) { [weak self] _, completionHandler, error in
+            guard error == nil else {
+                print("❌ Observer error: \(error!.localizedDescription)")
+                return
+            }
+
+            self?.checkIfUserIsSleeping()
+            completionHandler()
+        }
+
+        if let query = observerQuery {
+            healthStore.execute(query)
+        }
+    }
+
+    func checkIfUserIsSleeping() {
+        guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else { return }
+
+        let startDate = Calendar.current.date(byAdding: .hour, value: -2, to: Date())!
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: Date(), options: .strictEndDate)
+
+        let query = HKSampleQuery(sampleType: sleepType,
+                                  predicate: predicate,
+                                  limit: 1,
+                                  sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)]) { [weak self] _, samples, _ in
+            guard let self = self,
+                  let sample = samples?.first as? HKCategorySample else { return }
+
+            DispatchQueue.main.async {
+                self.isUserInSleepMode = sample.value == HKCategoryValueSleepAnalysis.inBed.rawValue
+                print("🛏️ Sleep mode status updated: \(self.isUserInSleepMode)")
+            }
+        }
+
+        healthStore.execute(query)
     }
 
     func fetchSleepData() {

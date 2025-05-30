@@ -319,7 +319,7 @@
 				DEVELOPMENT_TEAM = K4H4UFJU24;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = VirtualPet;
+				INFOPLIST_KEY_CFBundleDisplayName = "Healthy Friend";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses your sleep data to improve the experience.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Your pet would like to sleep at the same time as you.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -352,7 +352,7 @@
 				DEVELOPMENT_TEAM = K4H4UFJU24;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = VirtualPet;
+				INFOPLIST_KEY_CFBundleDisplayName = "Healthy Friend";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses your sleep data to improve the experience.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Your pet would like to sleep at the same time as you.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
