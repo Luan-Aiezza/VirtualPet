@@ -46,7 +46,7 @@ extension PetManager {
             }
             .buttonStyle(.bordered)
             .tint(Color.yellow)
-            .bold(true)
+            .font(Font.body.bold())
             .disabled(sleepVM.isSleeping || !hungerVM.canFeed())
 
         case .sleep:
@@ -55,7 +55,7 @@ extension PetManager {
             }
             .buttonStyle(.bordered)
             .tint(Color.purple)
-            .bold(true)
+            .font(Font.body.bold())
 
         case .joy:
             Button("Play") {
@@ -63,7 +63,7 @@ extension PetManager {
             }
             .buttonStyle(.bordered)
             .tint(Color.green)
-            .bold(true)
+            .font(Font.body.bold())
             .disabled(sleepVM.isSleeping || !joyVM.canplay())
         }
     }
