@@ -39,7 +39,7 @@ struct ContentView: View {
                 VStack{
                     Spacer()
                     petManager.handleCrownValueButton()
-                        .frame(width: geo.size.width/2.5, height: geo.size.height/2.5)
+                        .frame(width: geo.size.width/2.0, height: geo.size.height/2.5)
                 }
                 .ignoresSafeArea()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -69,7 +69,7 @@ struct ContentView: View {
                 .frame(width: width)
             
         case .sleep:
-            ProgressBar(value: petManager.sleepVM.sleep, color: .purple)
+            ProgressBar(value: petManager.sleepVM.sleep, color: .indigo)
                 .frame(width: width)
         }
     }
