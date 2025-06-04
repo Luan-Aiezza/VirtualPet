@@ -54,7 +54,7 @@ extension PetManager {
                 self.toggleSleep()
             }
             .buttonStyle(.bordered)
-            .tint(Color.purple)
+            .tint(Color.indigo)
             .font(Font.body.bold())
 
         case .joy:

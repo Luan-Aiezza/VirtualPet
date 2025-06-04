@@ -17,6 +17,9 @@ class SleepViewModel: ObservableObject {
                 self?.handleSleepStateChange(isSleeping: inSleepMode)
             }
             .store(in: &cancellables)
+
+        sleepDataManager.requestAuthorization()
+        preloadSleepFromHealthData()
     }
 
     private func handleSleepStateChange(isSleeping: Bool) {
@@ -28,16 +31,26 @@ class SleepViewModel: ObservableObject {
             print("Pet acordou automaticamente")
         }
     }
+    //NOVA FUNÇÃO
+    func preloadSleepFromHealthData() {
+        sleepDataManager.fetchLastNightSleep { [weak self] duration in
+            guard let self = self else { return }
+            let target = self.sleepDataManager.averageSleepDuration
+            let percent = min(duration / target, 1.0)
+            self.sleep = percent * 100
+            print("💤 Sono carregado do HealthKit: \(self.sleep)%")
+        }
+    }
 
     func update(interval: TimeInterval, isSleeping: Bool) {
         if isSleeping {
             let targetDuration = sleepDataManager.averageSleepDuration
-            sleep += interval / targetDuration * 100
+            sleep += interval / targetDuration * 1000
             if sleep >= 100 {
                 sleep = 100
             }
         } else {
-            sleep = max(0, sleep - interval / (16 * 3600) * 100)
+            sleep = max(0, sleep - interval / (16 * 36) * 100)
         }
     }
 

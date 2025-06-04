@@ -11,11 +11,11 @@ class PetAnimationController: ObservableObject {
     private var currentLoopKey: String?
 
     private let frameRates: [String: Double] = [
-        "Idle": 0.10,
+        "Idle": 0.40,
         "Feed": 0.2,
         "Playing": 0.15,
         "Sleep": 0.20,
-        "Drowsy": 0.20,
+        "Drowsy": 0.25,
         "Sad": 0.25,
         "Hungry": 0.3,
         "Denying": 0.3

@@ -21,7 +21,10 @@ class PetManager: ObservableObject {
         evolutionManager.updateStage(birthDate: lifeManager.birthDate)
         animationController.setupScene(stage: evolutionManager.stage) // ← ESSENCIAL
         evaluateInitialAnimationState()
-        startTimer()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.startTimer()
+        }
+       //startTimer() antes
         evaluatePriority()
     }
 
@@ -70,6 +73,7 @@ class PetManager: ObservableObject {
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             self.updateState()
         }
+        
     }
 
     public func stopTimer() {
@@ -88,8 +92,6 @@ class PetManager: ObservableObject {
 
         evolutionManager.updateStage(birthDate: lifeManager.birthDate)
         lifeManager.checkDeath(hunger: hungerVM.hunger, sleep: sleepVM.sleep, joy: joyVM.joy)
-
-//        evaluateSleepAutomatically()
         evaluatePriority()
         saveState()
     }
@@ -102,30 +104,15 @@ class PetManager: ObservableObject {
     }
 
     func toggleSleep() {
-//        let canSleep = sleepVM.canSleep()
         let wasSleeping = sleepVM.isSleeping
 
         if wasSleeping {
-            // Acordar o pet mesmo que não possa "dormir"
+
             sleepVM.toggleSleep()
             animationController.updateSleepState(isSleeping: false, stage: evolutionManager.stage)
         }
-//        else if canSleep {
-//            // Dormir apenas se puder
-//            sleepVM.toggleSleep()
-//            animationController.updateSleepState(isSleeping: true, stage: evolutionManager.stage)
-//        } else {
-//            // Não pode dormir e estava acordado → negar
-//            animationController.playDenial(for: evolutionManager.stage)
-//        }
+
     }
-    
-//    func evaluateSleepAutomatically() {
-//        if !sleepVM.isSleeping && sleepVM.shouldStartSleeping() {
-//            sleepVM.toggleSleep()
-//            animationController.updateSleepState(isSleeping: true, stage: evolutionManager.stage)
-//        }
-//    }
 
     func playWithPet() {
         if joyVM.canplay() {

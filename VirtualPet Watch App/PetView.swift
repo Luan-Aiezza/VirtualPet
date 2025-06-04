@@ -36,16 +36,17 @@ struct ContentView: View {
                 .onDisappear {
                     petManager.stopTimer()
                 }
+                
                 VStack{
                     Spacer()
                     petManager.handleCrownValueButton()
-                        .frame(width: geo.size.width/2.5, height: geo.size.height/2.5)
+                        .frame(width: geo.size.width/2.2, height: geo.size.height/2.5)
                 }
                 .ignoresSafeArea()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .focusable()
                 
-            }.background(
+            }
+            .background(
                 Image(backgroundImage(for: petManager.crownVM.currentState))
                     .resizable()
                     .scaledToFill()
@@ -69,7 +70,7 @@ struct ContentView: View {
                 .frame(width: width)
             
         case .sleep:
-            ProgressBar(value: petManager.sleepVM.sleep, color: .purple)
+            ProgressBar(value: petManager.sleepVM.sleep, color: .indigo)
                 .frame(width: width)
         }
     }
