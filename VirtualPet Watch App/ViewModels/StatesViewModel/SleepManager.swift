@@ -20,7 +20,7 @@ class SleepDataManager: ObservableObject {
                 self.startObservingSleepChanges()
                 self.fetchSleepData()
             } else {
-                print("🚫 HealthKit auth failed: \(error?.localizedDescription ?? "Unknown error")")
+                print("HealthKit auth failed: \(error?.localizedDescription ?? "Unknown error")")
             }
         }
     }
@@ -30,7 +30,7 @@ class SleepDataManager: ObservableObject {
 
         observerQuery = HKObserverQuery(sampleType: sleepType, predicate: nil) { [weak self] _, completionHandler, error in
             guard error == nil else {
-                print("❌ Observer error: \(error!.localizedDescription)")
+                print("Observer error: \(error!.localizedDescription)")
                 return
             }
 
@@ -58,7 +58,7 @@ class SleepDataManager: ObservableObject {
 
             DispatchQueue.main.async {
                 self.isUserInSleepMode = sample.value == HKCategoryValueSleepAnalysis.inBed.rawValue
-                print("🛏️ Sleep mode status updated: \(self.isUserInSleepMode)")
+                print("Sleep mode status updated: \(self.isUserInSleepMode)")
             }
         }
 
@@ -92,7 +92,7 @@ class SleepDataManager: ObservableObject {
                     self.averageBedtime = DateComponents(hour: hour, minute: minute)
                 }
 
-                print("💤 Média de sono: \(self.averageSleepDuration / 3600)h, horário médio: \(self.averageBedtime.hour ?? -1)h")
+                print("Média de sono: \(self.averageSleepDuration / 3600)h, horário médio: \(self.averageBedtime.hour ?? -1)h")
             }
         }
 
