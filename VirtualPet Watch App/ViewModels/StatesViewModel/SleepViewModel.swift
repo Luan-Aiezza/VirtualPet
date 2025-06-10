@@ -35,23 +35,22 @@ class SleepViewModel: ObservableObject {
     func preloadSleepFromHealthData() {
         sleepDataManager.fetchLastNightSleep { [weak self] duration in
             guard let self = self else { return }
-            let target = self.sleepDataManager.averageSleepDuration
-            let percent = min(duration / target, 1.0)
-            self.sleep = percent * 100
-            print("💤 Sono carregado do HealthKit: \(self.sleep)%")
+            let cappedDuration = min(duration, 8 * 3600) // máximo 8h
+            self.sleep = (cappedDuration / (8 * 3600)) * 100
+            print("⏰ Sono carregado: \(duration / 3600)h → \(self.sleep)%")
         }
     }
-
+    
     func update(interval: TimeInterval, isSleeping: Bool) {
-        if isSleeping {
-            let targetDuration = sleepDataManager.averageSleepDuration
-            sleep += interval / targetDuration * 1000
-            if sleep >= 100 {
-                sleep = 100
-            }
-        } else {
-            sleep = max(0, sleep - interval / (16 * 36) * 100)
-        }
+        //        if isSleeping {
+        //            let targetDuration = sleepDataManager.averageSleepDuration
+        //            sleep += interval / targetDuration * 100
+        //            if sleep >= 100 {
+        //                sleep = 100
+        //            }
+        //        } else {
+        sleep = max(0, sleep - interval / (16 * 3600) * 100)
+        //        }
     }
 
     func canSleep() -> Bool {

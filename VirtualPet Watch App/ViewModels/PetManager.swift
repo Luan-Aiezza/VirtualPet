@@ -4,6 +4,7 @@ import WatchKit
 import Foundation
 
 class PetManager: ObservableObject {
+    
     @Published var hungerVM = HungerViewModel()
     @Published var sleepVM = SleepViewModel()
     @Published var joyVM = JoyViewModel()
@@ -14,7 +15,8 @@ class PetManager: ObservableObject {
 
     private var cancellables: Set<AnyCancellable> = []
     private var timer: Timer?
-
+    private var lastSleepFetchDate: Date = .distantPast
+    
     init() {
         bindViewModels()
         loadState()
@@ -86,6 +88,13 @@ class PetManager: ObservableObject {
         let interval = now.timeIntervalSince(lifeManager.lastActionTime)
         lifeManager.lastActionTime = now
 
+        // Checa se é um novo dia
+        if !Calendar.current.isDate(lastSleepFetchDate, inSameDayAs: now) {
+            sleepVM.preloadSleepFromHealthData()
+            lastSleepFetchDate = now
+            UserDefaults.standard.set(lastSleepFetchDate, forKey: "lastSleepFetchDate")
+        }
+
         sleepVM.update(interval: interval, isSleeping: sleepVM.isSleeping)
         hungerVM.update(interval: interval)
         joyVM.update(interval: interval)
@@ -96,6 +105,7 @@ class PetManager: ObservableObject {
         saveState()
     }
 
+    
     func feedPet() {
         if hungerVM.canFeed() {
             hungerVM.feed()
@@ -163,6 +173,10 @@ class PetManager: ObservableObject {
         hungerVM.hunger = UserDefaults.standard.double(forKey: "hunger")
         sleepVM.sleep = UserDefaults.standard.double(forKey: "sleep")
         joyVM.joy = UserDefaults.standard.double(forKey: "joy")
+        
+        if let lastSleepFetch = UserDefaults.standard.object(forKey: "lastSleepFetchDate") as? Date {
+            self.lastSleepFetchDate = lastSleepFetch
+        }
 
         if let birthDate = UserDefaults.standard.object(forKey: "birthDate") as? Date {
             lifeManager.birthDate = birthDate
@@ -174,6 +188,7 @@ class PetManager: ObservableObject {
     }
 
     public func saveState() {
+        UserDefaults.standard.set(lastSleepFetchDate, forKey: "lastSleepFetchDate")
         UserDefaults.standard.set(hungerVM.hunger, forKey: "hunger")
         UserDefaults.standard.set(sleepVM.sleep, forKey: "sleep")
         UserDefaults.standard.set(joyVM.joy, forKey: "joy")
