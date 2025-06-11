@@ -63,4 +63,23 @@ class SleepViewModel: ObservableObject {
             isSleeping = false
         }
     }
+
+    /// If the user was in sleep mode while the app was closed, increment the sleep bar accordingly (up to 8 hours max).
+    /// Uses the lastActionTime as the reference for when the app last updated state.
+    func retroactivelyAddSleepIfNeeded(lastActionTime: Date) {
+        // If user is currently in sleep mode
+        if sleepDataManager.isUserInSleepMode {
+            let now = Date()
+            // Calculate the interval since lastActionTime
+            let sleptInterval = now.timeIntervalSince(lastActionTime)
+            // If positive and plausible (i.e., less than 12h)
+            if sleptInterval > 0 && sleptInterval < 60 * 60 * 12 {
+                // Calculate the amount to add based on 8 hours full recovery
+                let maxSleepTime: TimeInterval = 8 * 3600
+                let percentToAdd = (sleptInterval / maxSleepTime) * 100
+                self.sleep = min(100, self.sleep + percentToAdd)
+                print("[Retroactive Sleep] Added \(percentToAdd)% sleep for interval: \(sleptInterval/3600)h")
+            }
+        }
+    }
 }

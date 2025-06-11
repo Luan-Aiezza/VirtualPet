@@ -2,6 +2,7 @@ import SwiftUI
 import Combine
 import WatchKit
 import Foundation
+import UserNotifications
 
 class PetManager: ObservableObject {
     
@@ -17,9 +18,17 @@ class PetManager: ObservableObject {
     private var timer: Timer?
     private var lastSleepFetchDate: Date = .distantPast
     
+    // Flags to control notification sending and avoid spam
+    private var notifiedSleepy = false
+    private var notifiedHungry = false
+    private var notifiedSad = false
+    
     init() {
+        NotificationManager.shared.requestAuthorization()
         bindViewModels()
         loadState()
+        // Adjust sleep data based on time elapsed since last action to keep sleep state accurate
+        sleepVM.retroactivelyAddSleepIfNeeded(lastActionTime: lifeManager.lastActionTime)
         evolutionManager.updateStage(birthDate: lifeManager.birthDate)
         animationController.setupScene(stage: evolutionManager.stage) // ← ESSENCIAL
         evaluateInitialAnimationState()
@@ -157,14 +166,42 @@ class PetManager: ObservableObject {
             animationController.updateSleepState(isSleeping: true, stage: stage)
             return
         }
-
+        
+        // Sleep critical state check and notification
         if sleepVM.sleep <= 25 {
             animationController.startDrowsyAnimationLoop(stage: stage)
-        } else if joyVM.joy <= 25 {
-            animationController.startSadAnimationLoop(stage: stage)
-        } else if hungerVM.hunger <= 25 {
-            animationController.startHungryAnimationLoop(stage: stage)
+            if !notifiedSleepy {
+                NotificationManager.shared.sendPetNotification(type: .sleepy(stage: stage), stage: stage)
+                notifiedSleepy = true
+            }
         } else {
+            notifiedSleepy = false
+        }
+
+        // Joy critical state check and notification
+        if joyVM.joy <= 25 {
+            animationController.startSadAnimationLoop(stage: stage)
+            if !notifiedSad {
+                NotificationManager.shared.sendPetNotification(type: .sad(stage: stage), stage: stage)
+                notifiedSad = true
+            }
+        } else {
+            notifiedSad = false
+        }
+
+        // Hunger critical state check and notification
+        if hungerVM.hunger <= 25 {
+            animationController.startHungryAnimationLoop(stage: stage)
+            if !notifiedHungry {
+                NotificationManager.shared.sendPetNotification(type: .hungry(stage: stage), stage: stage)
+                notifiedHungry = true
+            }
+        } else {
+            notifiedHungry = false
+        }
+        
+        // If none critical states are triggered, reset to idle if not sleeping and no other animations started
+        if sleepVM.sleep > 25 && joyVM.joy > 25 && hungerVM.hunger > 25 && !sleepVM.isSleeping {
             animationController.resetToIdle()
         }
     }
@@ -196,3 +233,9 @@ class PetManager: ObservableObject {
         UserDefaults.standard.set(lifeManager.lastActionTime, forKey: "lastActionTime")
     }
 }
+
+// Note: The notification assets (images or icons) used by NotificationManager 
+// should be placed in your project’s Assets.xcassets folder with names matching 
+// the assetName returned by NotificationManager for each notification type, 
+// so the notifications display the corresponding images correctly.
+

@@ -319,6 +319,7 @@
 				DEVELOPMENT_TEAM = K4H4UFJU24;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "VirtualPet-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Healthy Friend";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses your sleep data to improve the experience.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Your pet would like to sleep at the same time as you.";
@@ -328,7 +329,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.3;
+				MARKETING_VERSION = 2.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = mooncat.HealthFriend.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -352,6 +353,7 @@
 				DEVELOPMENT_TEAM = K4H4UFJU24;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "VirtualPet-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Healthy Friend";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses your sleep data to improve the experience.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Your pet would like to sleep at the same time as you.";
@@ -361,7 +363,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.3;
+				MARKETING_VERSION = 2.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = mooncat.HealthFriend.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -382,7 +384,7 @@
 				DEVELOPMENT_TEAM = K4H4UFJU24;
 				INFOPLIST_KEY_CFBundleDisplayName = "Healthy Friend";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
-				MARKETING_VERSION = 2.0.3;
+				MARKETING_VERSION = 2.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = mooncat.HealthFriend;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -398,7 +400,7 @@
 				DEVELOPMENT_TEAM = K4H4UFJU24;
 				INFOPLIST_KEY_CFBundleDisplayName = "Healthy Friend";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
-				MARKETING_VERSION = 2.0.3;
+				MARKETING_VERSION = 2.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = mooncat.HealthFriend;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
