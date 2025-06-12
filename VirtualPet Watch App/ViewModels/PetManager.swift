@@ -35,7 +35,6 @@ class PetManager: ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             self.startTimer()
         }
-       //startTimer() antes
         evaluatePriority()
     }
 
@@ -70,12 +69,10 @@ class PetManager: ObservableObject {
             // Entrar em sono automático via modo sono
             sleepVM.isSleeping = true
             animationController.updateSleepState(isSleeping: true, stage: evolutionManager.stage)
-            print("🌙 Pet entrou em sono via modo sono do Apple Watch")
         } else if !isSleeping && sleepVM.isSleeping {
             // Acordar automaticamente ao sair do modo sono
             sleepVM.isSleeping = false
             animationController.updateSleepState(isSleeping: false, stage: evolutionManager.stage)
-            print("☀️ Pet acordou automaticamente via fim do modo sono")
         }
     }
 
@@ -233,9 +230,3 @@ class PetManager: ObservableObject {
         UserDefaults.standard.set(lifeManager.lastActionTime, forKey: "lastActionTime")
     }
 }
-
-// Note: The notification assets (images or icons) used by NotificationManager 
-// should be placed in your project’s Assets.xcassets folder with names matching 
-// the assetName returned by NotificationManager for each notification type, 
-// so the notifications display the corresponding images correctly.
-

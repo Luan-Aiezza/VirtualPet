@@ -42,15 +42,7 @@ class SleepViewModel: ObservableObject {
     }
     
     func update(interval: TimeInterval, isSleeping: Bool) {
-        //        if isSleeping {
-        //            let targetDuration = sleepDataManager.averageSleepDuration
-        //            sleep += interval / targetDuration * 100
-        //            if sleep >= 100 {
-        //                sleep = 100
-        //            }
-        //        } else {
         sleep = max(0, sleep - interval / (16 * 3600) * 100)
-        //        }
     }
 
     func canSleep() -> Bool {
