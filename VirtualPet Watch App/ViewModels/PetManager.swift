@@ -16,7 +16,7 @@ class PetManager: ObservableObject {
 
     private var cancellables: Set<AnyCancellable> = []
     private var timer: Timer?
-    private var lastSleepFetchDate: Date = .distantPast
+    //private var lastSleepFetchDate: Date = .distantPast
     
     // Flags to control notification sending and avoid spam
     private var notifiedSleepy = false
@@ -28,7 +28,7 @@ class PetManager: ObservableObject {
         bindViewModels()
         loadState()
         // Adjust sleep data based on time elapsed since last action to keep sleep state accurate
-        sleepVM.retroactivelyAddSleepIfNeeded(lastActionTime: lifeManager.lastActionTime)
+        //sleepVM.retroactivelyAddSleepIfNeeded(lastActionTime: lifeManager.lastActionTime)
         evolutionManager.updateStage(birthDate: lifeManager.birthDate)
         animationController.setupScene(stage: evolutionManager.stage) // ← ESSENCIAL
         evaluateInitialAnimationState()
@@ -93,13 +93,6 @@ class PetManager: ObservableObject {
         let now = Date()
         let interval = now.timeIntervalSince(lifeManager.lastActionTime)
         lifeManager.lastActionTime = now
-
-        // Checa se é um novo dia
-        if !Calendar.current.isDate(lastSleepFetchDate, inSameDayAs: now) {
-            sleepVM.preloadSleepFromHealthData()
-            lastSleepFetchDate = now
-            UserDefaults.standard.set(lastSleepFetchDate, forKey: "lastSleepFetchDate")
-        }
 
         sleepVM.update(interval: interval, isSleeping: sleepVM.isSleeping)
         hungerVM.update(interval: interval)
@@ -207,10 +200,6 @@ class PetManager: ObservableObject {
         hungerVM.hunger = UserDefaults.standard.double(forKey: "hunger")
         sleepVM.sleep = UserDefaults.standard.double(forKey: "sleep")
         joyVM.joy = UserDefaults.standard.double(forKey: "joy")
-        
-        if let lastSleepFetch = UserDefaults.standard.object(forKey: "lastSleepFetchDate") as? Date {
-            self.lastSleepFetchDate = lastSleepFetch
-        }
 
         if let birthDate = UserDefaults.standard.object(forKey: "birthDate") as? Date {
             lifeManager.birthDate = birthDate
@@ -222,7 +211,6 @@ class PetManager: ObservableObject {
     }
 
     public func saveState() {
-        UserDefaults.standard.set(lastSleepFetchDate, forKey: "lastSleepFetchDate")
         UserDefaults.standard.set(hungerVM.hunger, forKey: "hunger")
         UserDefaults.standard.set(sleepVM.sleep, forKey: "sleep")
         UserDefaults.standard.set(joyVM.joy, forKey: "joy")
