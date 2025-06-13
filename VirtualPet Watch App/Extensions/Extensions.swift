@@ -38,36 +38,41 @@ extension PetManager {
 
 extension PetManager {
     @ViewBuilder
-    func handleCrownValueButton() -> some View {
+    public func handleCrownValueButton() -> some View {
         switch crownVM.currentState {
         case .hunger:
-            Button("Feed") {
-                self.feedPet()
+            if !sleepVM.isSleeping && hungerVM.canFeed() {
+                Button("Feed") {
+                    self.feedPet()
+                }
+                .buttonStyle(.bordered)
+                .tint(Color.yellow)
+                .font(Font.body.bold())
+            } else {
+                EmptyView()
             }
-            .buttonStyle(.bordered)
-            .tint(Color.yellow)
-            .font(Font.body.bold())
-            .disabled(sleepVM.isSleeping || !hungerVM.canFeed())
-
         case .sleep:
-            Button(/*sleepVM.isSleeping ?*/ "Awake" /*: "Sleep"*/) {
-                self.toggleSleep()
+            if sleepVM.isSleeping /*&& sleepVM.canAwake()*/ {
+                Button("Awake") {
+                    self.toggleSleep()
+                }
+                .buttonStyle(.bordered)
+                .tint(Color.indigo)
+                .font(Font.body.bold())
+            } else {
+                EmptyView()
             }
-            .buttonStyle(.bordered)
-            .tint(Color.indigo)
-            .font(Font.body.bold())
-
         case .joy:
-            Button("Play") {
-                self.playWithPet()
+            if !sleepVM.isSleeping && joyVM.canplay() {
+                Button("Play") {
+                    self.playWithPet()
+                }
+                .buttonStyle(.bordered)
+                .tint(Color.green)
+                .font(Font.body.bold())
+            } else {
+                EmptyView()
             }
-            .buttonStyle(.bordered)
-            .tint(Color.green)
-            .font(Font.body.bold())
-            .disabled(sleepVM.isSleeping || !joyVM.canplay())
         }
     }
 }
-
-
-

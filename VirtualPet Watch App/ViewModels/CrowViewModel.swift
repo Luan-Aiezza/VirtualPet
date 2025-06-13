@@ -14,6 +14,18 @@ class CrownViewModel: ObservableObject {
         default: return .joy
         }
     }
+
+    public func incrementState() {
+        if crownValue < 2 {
+            crownValue += 1
+        }
+    }
+
+    public func decrementState() {
+        if crownValue > 0 {
+            crownValue -= 1
+        }
+    }
 }
 
 enum CrownState {

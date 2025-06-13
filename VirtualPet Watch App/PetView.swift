@@ -28,7 +28,7 @@ struct ContentView: View {
                 .digitalCrownRotation($petManager.crownVM.crownValue,
                                       from: 0,
                                       through: 2,
-                                      by: 1.0,
+                                      by: 1,
                                       sensitivity: .low)
                 .onAppear {
                     petManager.startTimer()
@@ -55,6 +55,19 @@ struct ContentView: View {
             )
             
         }
+        // Gesture to detect vertical swipe between pet interfaces
+        .gesture(
+            DragGesture(minimumDistance: 20, coordinateSpace: .local)
+                .onEnded { value in
+                    if value.translation.height < 0 {
+                        // Swipe up
+                        petManager.crownVM.incrementState()
+                    } else if value.translation.height > 0 {
+                        // Swipe down
+                        petManager.crownVM.decrementState()
+                    }
+                }
+        )
     }
     
     // MARK: - Helper: barra de progresso baseada no estado atual da coroa
@@ -83,36 +96,6 @@ struct ContentView: View {
         }
     }
     
-}
-
-struct ProgressBar: View {
-    var value: Double  // Esperado entre 0.0 e 1.0
-    var color: Color
-    
-    var body: some View {
-        GeometryReader { geometry in
-            ZStack(alignment: .bottom) {
-                // Barra de fundo (limite total)
-                RoundedRectangle(cornerSize: CGSize(width: 24, height: 24))
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                    .opacity(0.3)
-                    .foregroundColor(color)
-                
-                // Barra de progresso proporcional
-                RoundedRectangle(cornerSize: CGSize(width: 24, height: 24))
-                    .frame(
-                        width: geometry.size.width,
-                        height: geometry.size.height * CGFloat(clamp(value/100))
-                    )
-                    .foregroundColor(color)
-            }
-        }
-        .padding(.horizontal)
-    }
-    
-    private func clamp(_ value: Double) -> Double {
-        return min(max(value, 0.0), 1.0)
-    }
 }
 
 struct ContentView_Previews: PreviewProvider {
