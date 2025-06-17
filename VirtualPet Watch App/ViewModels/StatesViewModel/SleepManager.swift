@@ -9,19 +9,23 @@ class SleepDataManager: ObservableObject {
     @Published var averageBedtime: DateComponents = DateComponents(hour: 23)
 
     init() {
-        requestAuthorization()
+       requestAuthorization { _ in }
     }
 
-    func requestAuthorization() {
-        guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else { return }
-
-        healthStore.requestAuthorization(toShare: [], read: [sleepType]) { success, error in
-            if success {
-                self.startObservingSleepChanges()
-                self.fetchSleepData()
-            } else {
-                print("HealthKit auth failed: \(error?.localizedDescription ?? "Unknown error")")
+    func requestAuthorization(completion: @escaping (Bool) -> Void) {
+        if let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) {
+            healthStore.requestAuthorization(toShare: [], read: [sleepType]) { success, error in
+                if success {
+                    self.startObservingSleepChanges()
+                    self.fetchSleepData()
+                    completion(true)
+                } else {
+                    print("HealthKit auth failed: \(error?.localizedDescription ?? "Unknown error")")
+                    completion(false)
+                }
             }
+        } else {
+            completion(false)
         }
     }
 

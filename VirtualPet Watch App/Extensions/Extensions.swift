@@ -52,7 +52,14 @@ extension PetManager {
                 EmptyView()
             }
         case .sleep:
-            if sleepVM.isSleeping /*&& sleepVM.canAwake()*/ {
+            if !sleepVM.isHealthKitAuthorized {
+                Button(sleepVM.isSleeping ? "Awake" : "Sleep") {
+                    self.toggleSleep()
+                }
+                .buttonStyle(.bordered)
+                .tint(Color.indigo)
+                .font(Font.body.bold())
+            } else if sleepVM.isSleeping /*&& sleepVM.canAwake()*/ {
                 Button("Awake") {
                     self.toggleSleep()
                 }

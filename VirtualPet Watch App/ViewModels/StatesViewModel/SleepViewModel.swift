@@ -7,6 +7,8 @@ class SleepViewModel: ObservableObject {
     @Published var sleep: Double = 25.0
     @Published var isSleeping: Bool = false
     @Published var sleepDataManager = SleepDataManager()
+    @Published var isHealthKitAuthorized: Bool = true
+    private var lastSleepToggleDate: Date? = nil
 
     private var cancellables: Set<AnyCancellable> = []
 
@@ -17,9 +19,20 @@ class SleepViewModel: ObservableObject {
                 self?.handleSleepStateChange(isSleeping: inSleepMode)
             }
             .store(in: &cancellables)
+        
+        sleepDataManager.requestAuthorization { [weak self] authorized in
+            self?.updateHealthKitAuthorizationStatus(authorized)
+            if authorized {
+                self?.preloadSleepFromHealthData()
+            }
+        }
+    }
 
-        sleepDataManager.requestAuthorization()
-        preloadSleepFromHealthData()
+    private func updateHealthKitAuthorizationStatus(_ authorized: Bool) {
+        isHealthKitAuthorized = authorized
+        if !authorized {
+            print("[SleepViewModel] HealthKit não autorizado. Sleep será controlado manualmente.")
+        }
     }
 
     private func handleSleepStateChange(isSleeping: Bool) {
@@ -35,6 +48,10 @@ class SleepViewModel: ObservableObject {
     func preloadSleepFromHealthData() {
         sleepDataManager.fetchLastNightSleep { [weak self] duration in
             guard let self = self else { return }
+            if duration == 0 {
+                self.isHealthKitAuthorized = false
+                return
+            }
             let cappedDuration = min(duration, 8 * 3600) // máximo 8h
             self.sleep = (cappedDuration / (8 * 3600)) * 100
             print("⏰ Sono carregado: \(duration / 3600)h → \(self.sleep)%")
@@ -42,7 +59,15 @@ class SleepViewModel: ObservableObject {
     }
     
     func update(interval: TimeInterval, isSleeping: Bool) {
-        sleep = max(0, sleep - interval / (16 * 3600) * 100)
+        if isHealthKitAuthorized {
+            sleep = max(0, sleep - interval / (16 * 3600) * 100)
+        } else {
+            if isSleeping {
+                sleep = min(100, sleep + interval / (8 * 3600) * 100)
+            } else {
+                sleep = max(0, sleep - interval / (16 * 3600) * 100)
+            }
+        }
     }
 
     func canSleep() -> Bool {
@@ -51,8 +76,25 @@ class SleepViewModel: ObservableObject {
 
     // Só permite o usuário acordar manualmente
     func toggleSleep() {
-        if isSleeping {
-            isSleeping = false
+        if isHealthKitAuthorized {
+            if isSleeping {
+                isSleeping = false
+            }
+        } else {
+            if isSleeping {
+                isSleeping = false
+                if let startDate = lastSleepToggleDate {
+                    let slept = Date().timeIntervalSince(startDate)
+                    let percentToAdd = min(100 - sleep, (slept / (8 * 3600)) * 100)
+                    sleep += percentToAdd
+                    print("[Manual Sleep] Adicionado \(percentToAdd)% de sono após \(slept/3600)h dormidos manualmente.")
+                }
+                lastSleepToggleDate = nil
+            } else {
+                isSleeping = true
+                lastSleepToggleDate = Date()
+                print("[Manual Sleep] Pet entrou em modo sono manual.")
+            }
         }
     }
 
