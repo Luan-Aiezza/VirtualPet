@@ -116,11 +116,14 @@ class PetManager: ObservableObject {
         let wasSleeping = sleepVM.isSleeping
 
         if wasSleeping {
-
+            // Acorda manualmente
             sleepVM.toggleSleep()
             animationController.updateSleepState(isSleeping: false, stage: evolutionManager.stage)
+        } else if sleepVM.canSleep() {
+            // Inicia sono manualmente
+            sleepVM.isSleeping = true
+            animationController.updateSleepState(isSleeping: true, stage: evolutionManager.stage)
         }
-
     }
 
     func playWithPet() {

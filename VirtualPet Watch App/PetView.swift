@@ -75,15 +75,15 @@ struct ContentView: View {
     private func progressBarForCurrentState(width: CGFloat) -> some View {
         switch petManager.crownVM.currentState {
         case .hunger:
-            ProgressBar(value: petManager.hungerVM.hunger, color: .yellow)
+            ProgressBar(value: petManager.hungerVM.hunger, color: .yellow, iconName: "Feed_Icon")
                 .frame(width: width)
 
         case .joy:
-            ProgressBar(value: petManager.joyVM.joy, color: .green)
+            ProgressBar(value: petManager.joyVM.joy, color: .green, iconName: "Joy_Icon")
                 .frame(width: width)
             
         case .sleep:
-            ProgressBar(value: petManager.sleepVM.sleep, color: .indigo)
+            ProgressBar(value: petManager.sleepVM.sleep, color: .indigo, iconName: "Sleep_Icon")
                 .frame(width: width)
         }
     }

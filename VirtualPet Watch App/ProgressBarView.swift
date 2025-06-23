@@ -6,6 +6,7 @@ import SpriteKit
 struct ProgressBar: View {
     var value: Double  // Esperado entre 0.0 e 1.0
     var color: Color
+    var iconName: String  // Nome do ícone a ser exibido no canto inferior direito
     
     var body: some View {
         ZStack {
@@ -32,11 +33,11 @@ struct ProgressBar: View {
                         .frame(width: geometry.size.width, height: geometry.size.height)
                     
                     // Nova camada com BorderBarIcon no canto inferior direito
-                    Image("BorderBarIcon")
+                    Image(iconName)
                         .resizable()
                         .scaledToFit()
                         .scaleEffect(1.5)
-                        .position(x: geometry.size.width - (geometry.size.width * 0.5), y: geometry.size.height - (geometry.size.height * 0.05))
+                        .position(x: geometry.size.width - (geometry.size.width * 0.4), y: geometry.size.height - (geometry.size.height * 0.05))
                 }
             }
         }

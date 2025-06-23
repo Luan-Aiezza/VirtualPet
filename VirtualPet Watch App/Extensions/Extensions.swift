@@ -42,34 +42,41 @@ extension PetManager {
         switch crownVM.currentState {
         case .hunger:
             if !sleepVM.isSleeping && hungerVM.canFeed() {
-                Button("Feed") {
+                Button {
                     self.feedPet()
+                } label: {
+                    Image("Feed_Button")
                 }
-                .buttonStyle(.bordered)
-                .tint(Color.yellow)
-                .font(Font.body.bold())
+                .buttonStyle(.borderless)
             } else {
                 EmptyView()
             }
         case .sleep:
-            if sleepVM.isSleeping /*&& sleepVM.canAwake()*/ {
-                Button("Awake") {
+            if sleepVM.isSleeping {
+                Button {
                     self.toggleSleep()
+                } label: {
+                    Image("Awake_Button")
                 }
-                .buttonStyle(.bordered)
-                .tint(Color.indigo)
-                .font(Font.body.bold())
+                .buttonStyle(.borderless)
+            } else if sleepVM.canSleep() {
+                Button {
+                    self.toggleSleep()
+                } label: {
+                    Image("Sleep_Button")
+                }
+                .buttonStyle(.borderless)
             } else {
                 EmptyView()
             }
         case .joy:
             if !sleepVM.isSleeping && joyVM.canplay() {
-                Button("Play") {
+                Button {
                     self.playWithPet()
+                } label: {
+                    Image("Joy_Button")
                 }
-                .buttonStyle(.bordered)
-                .tint(Color.green)
-                .font(Font.body.bold())
+                .buttonStyle(.borderless)
             } else {
                 EmptyView()
             }
