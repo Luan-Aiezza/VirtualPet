@@ -58,17 +58,17 @@ enum PetNotificationType {
     
     var title: String {
         switch self {
-        case .sleepy: return "Seu pet está com sono!"
-        case .hungry: return "Seu pet está faminto!"
-        case .sad:    return "Seu pet está triste!"
+        case .sleepy: return "Your pet is sleepy!"
+        case .hungry: return "Your pet is hungry!"
+        case .sad:    return "Your pet is very still!"
         }
     }
     
     var body: String {
         switch self {
-        case .sleepy: return "Está na hora de irmos dormir humano. 😴"
-        case .hungry: return "Estou ficando com fome humano! 🍖"
-        case .sad:    return "Estou tão entediado, queria brincar! 🧸"
+        case .sleepy: return "It's time for us to go to sleep, my human! 😴"
+        case .hungry: return "I'm soooo hungry human! 🍖"
+        case .sad:    return "I'm very very bored, human! 🧸"
         }
     }
     

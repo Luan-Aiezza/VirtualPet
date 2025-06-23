@@ -17,7 +17,6 @@ class JoyViewModel: ObservableObject {
                 guard let self = self else { return }
                 if didWorkout && self.joy < 100 {
                     self.joy = 100
-                    print("🏃‍♂️ Pet ficou feliz pois você fez exercício! Joy = 100%")
                 }
             }
             .store(in: &cancellables)
