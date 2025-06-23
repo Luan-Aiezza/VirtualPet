@@ -5,7 +5,23 @@ import Foundation
 
 class JoyViewModel: ObservableObject {
     @Published var joy: Double = 25.0
+    @Published var workoutManager = WorkoutManager()
     private var playingTimer: Timer?
+    private var cancellables: Set<AnyCancellable> = []
+    
+    init() {
+        workoutManager.$didWorkoutToday
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] didWorkout in
+                guard let self = self else { return }
+                if didWorkout && self.joy < 100 {
+                    self.joy = 100
+                    print("🏃‍♂️ Pet ficou feliz pois você fez exercício! Joy = 100%")
+                }
+            }
+            .store(in: &cancellables)
+    }
 
     func update(interval: TimeInterval) {
         joy = max(0, joy - interval / (24 * 3600) * 100)
@@ -35,3 +51,4 @@ class JoyViewModel: ObservableObject {
         joy < 25.0 // 2.5 de margem
     }
 }
+

@@ -1,26 +1,20 @@
+// Updated: Now uses HealthManager for HealthKit access!
 import HealthKit
 import Combine
 
 class SleepDataManager: ObservableObject {
-    private let healthStore = HKHealthStore()
     private var observerQuery: HKObserverQuery?
     @Published var isUserInSleepMode: Bool = false
     @Published var averageSleepDuration: TimeInterval = 8 * 3600
     @Published var averageBedtime: DateComponents = DateComponents(hour: 23)
 
     init() {
-        requestAuthorization()
-    }
-
-    func requestAuthorization() {
-        guard let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) else { return }
-
-        healthStore.requestAuthorization(toShare: [], read: [sleepType]) { success, error in
+        HealthManager.shared.requestAuthorization { [weak self] success in
             if success {
-                self.startObservingSleepChanges()
-                self.fetchSleepData()
+                self?.startObservingSleepChanges()
+                self?.fetchSleepData()
             } else {
-                print("HealthKit auth failed: \(error?.localizedDescription ?? "Unknown error")")
+                print("HealthKit auth failed in SleepDataManager")
             }
         }
     }
@@ -39,7 +33,7 @@ class SleepDataManager: ObservableObject {
         }
 
         if let query = observerQuery {
-            healthStore.execute(query)
+            HealthManager.shared.healthStore.execute(query)
         }
     }
 
@@ -62,7 +56,7 @@ class SleepDataManager: ObservableObject {
             }
         }
 
-        healthStore.execute(query)
+        HealthManager.shared.healthStore.execute(query)
     }
     //Novo método!
     func fetchLastNightSleep(completion: @escaping (TimeInterval) -> Void) {
@@ -97,7 +91,7 @@ class SleepDataManager: ObservableObject {
             }
         }
 
-        healthStore.execute(query)
+        HealthManager.shared.healthStore.execute(query)
     }
 
 
@@ -132,6 +126,6 @@ class SleepDataManager: ObservableObject {
             }
         }
 
-        healthStore.execute(query)
+        HealthManager.shared.healthStore.execute(query)
     }
 }

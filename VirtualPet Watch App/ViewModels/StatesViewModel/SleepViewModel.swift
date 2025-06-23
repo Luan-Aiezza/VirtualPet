@@ -17,8 +17,6 @@ class SleepViewModel: ObservableObject {
                 self?.handleSleepStateChange(isSleeping: inSleepMode)
             }
             .store(in: &cancellables)
-
-        sleepDataManager.requestAuthorization()
         preloadSleepFromHealthData()
     }
 

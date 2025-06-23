@@ -326,15 +326,15 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "VirtualPet-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Healthy Friend";
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses your sleep data to improve the experience.";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Your pet would like to sleep at the same time as you.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses your workout and sleep data to help you care for your pet";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app uses your workout and sleep data to help you care for your pet";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.7;
+				MARKETING_VERSION = 3.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = mooncat.HealthFriend.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -359,15 +359,15 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "VirtualPet-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Healthy Friend";
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses your sleep data to improve the experience.";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Your pet would like to sleep at the same time as you.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses your workout and sleep data to help you care for your pet";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app uses your workout and sleep data to help you care for your pet";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.7;
+				MARKETING_VERSION = 3.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = mooncat.HealthFriend.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -387,7 +387,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_KEY_CFBundleDisplayName = "Healthy Friend";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
-				MARKETING_VERSION = 2.0.7;
+				MARKETING_VERSION = 3.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = mooncat.HealthFriend;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -402,7 +402,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_KEY_CFBundleDisplayName = "Healthy Friend";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
-				MARKETING_VERSION = 2.0.7;
+				MARKETING_VERSION = 3.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = mooncat.HealthFriend;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
