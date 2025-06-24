@@ -325,7 +325,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "VirtualPet-Watch-App-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Healthy Friend";
+				INFOPLIST_KEY_CFBundleDisplayName = Hatchiko;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses your workout and sleep data to help you care for your pet";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app uses your workout and sleep data to help you care for your pet";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -334,7 +334,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.1;
+				MARKETING_VERSION = 3.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = mooncat.HealthFriend.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -358,7 +358,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "VirtualPet-Watch-App-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Healthy Friend";
+				INFOPLIST_KEY_CFBundleDisplayName = Hatchiko;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses your workout and sleep data to help you care for your pet";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app uses your workout and sleep data to help you care for your pet";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -367,7 +367,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.1;
+				MARKETING_VERSION = 3.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = mooncat.HealthFriend.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -385,9 +385,9 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_KEY_CFBundleDisplayName = "Healthy Friend";
+				INFOPLIST_KEY_CFBundleDisplayName = Hatchiko;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
-				MARKETING_VERSION = 3.0.1;
+				MARKETING_VERSION = 3.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = mooncat.HealthFriend;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -400,9 +400,9 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_KEY_CFBundleDisplayName = "Healthy Friend";
+				INFOPLIST_KEY_CFBundleDisplayName = Hatchiko;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
-				MARKETING_VERSION = 3.0.1;
+				MARKETING_VERSION = 3.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = mooncat.HealthFriend;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
