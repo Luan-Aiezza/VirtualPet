@@ -38,7 +38,13 @@ struct ContentView: View {
                     GeometryReader { geo in
                         
                         progressBarForCurrentState(width: geo.size.width * 0.15)
-                        
+                        // 🔥 Camada de escurecimento quando está dormindo
+                        if petManager.sleepVM.isSleeping {
+                            Color.black.opacity(0.6) // ajuste a opacidade conforme quiser
+                                .ignoresSafeArea()
+                                .transition(.opacity)
+                                .animation(.easeInOut, value: petManager.sleepVM.isSleeping)
+                        }
                         VStack {
                             Spacer()
                             SpriteView(scene: petManager.animationController.currentScene!)
@@ -69,7 +75,6 @@ struct ContentView: View {
                         }
                         .ignoresSafeArea()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        
                     }
                     .background(
                         Image(backgroundImage(for: petManager.crownVM.currentState))
@@ -78,7 +83,7 @@ struct ContentView: View {
                             .ignoresSafeArea()
                             .padding(.bottom)
                     )
-                    
+    
                 }
                 .allowsHitTesting(!petManager.lifeManager.isDead)
                 // Gesture to detect vertical swipe between pet interfaces
@@ -111,7 +116,7 @@ struct ContentView: View {
                 .frame(width: width)
             
         case .sleep:
-            ProgressBar(value: petManager.sleepVM.sleep, color: .indigo, iconName: "Sleep_Icon")
+            ProgressBar(value: petManager.sleepVM.sleep, color: .cyan, iconName: "Sleep_Icon")
                 .frame(width: width)
         }
     }

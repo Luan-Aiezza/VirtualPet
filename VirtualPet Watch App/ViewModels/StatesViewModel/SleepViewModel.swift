@@ -35,12 +35,17 @@ class SleepViewModel: ObservableObject {
             guard let self = self else { return }
             let cappedDuration = min(duration, 8 * 3600) // máximo 8h
             self.sleep = (cappedDuration / (8 * 3600)) * 100
-            print("⏰ Sono carregado: \(duration / 3600)h → \(self.sleep)%")
         }
     }
     
     func update(interval: TimeInterval, isSleeping: Bool) {
-        sleep = max(0, sleep - interval / (16 * 3600) * 100)
+        if isSleeping {
+            // Recupera sono manualmente ou pelo modo sono (até no máximo 100)
+            sleep = min(100, sleep + interval / (8 * 3600) * 100)
+        } else {
+            // Gasta sono normalmente
+            sleep = max(0, sleep - interval / (16 * 3600) * 100)
+        }
     }
 
     func canSleep() -> Bool {
@@ -73,3 +78,4 @@ class SleepViewModel: ObservableObject {
         }
     }
 }
+
