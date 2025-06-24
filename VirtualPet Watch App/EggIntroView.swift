@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct EggIntroView: View {
+    @AppStorage("hasSentEggHatchNotif") private var hasSentEggHatchNotif: Bool = false
     @State private var showPetView = false
     @State private var tappedEggIndex: Int? = nil
     @AppStorage("hasSeenEggIntro") private var hasSeenEggIntro: Bool = false
@@ -114,6 +115,10 @@ struct EggIntroView: View {
         withAnimation {
             hasSeenEggIntro = true
             showPetView = true
+            if !hasSentEggHatchNotif {
+                NotificationManager.shared.sendEggHatchedNotification()
+                hasSentEggHatchNotif = true
+            }
         }
     }
 }

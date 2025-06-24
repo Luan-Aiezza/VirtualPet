@@ -47,6 +47,38 @@ class NotificationManager {
             }
         }
     }
+    
+    /// Notificação ao chocar o ovo
+    func sendEggHatchedNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "Hello World!!!"
+        content.body = "It's so good to be alive, human!"
+        content.sound = .default
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Erro ao agendar notificação de nascimento do pet: \(error)")
+            } else {
+                print("Notificação de nascimento do pet enviada!")
+            }
+        }
+    }
+    
+    /// Notificação ao primeiro clique em sleep/feed
+    func sendDiscoverFeaturesNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "Tip!"
+        content.body = "You can also use sleep and workout mode to satisfy my needs!!"
+        content.sound = .default
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Erro ao agendar notificação de dicas: \(error)")
+            } else {
+                print("Notificação de dicas enviada!")
+            }
+        }
+    }
 }
 
 /// Notificação do pet com tipo e estágio associados.
