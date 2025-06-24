@@ -31,11 +31,15 @@ struct EggIntroView: View {
                     if isHatching {
                         Image(hatchingFrames[hatchingFrameIndex])
                             .resizable()
+                            .interpolation(.none)
+                            .antialiased(false)
                             .scaledToFit()
                             .frame(width: 48, height: 48)
                     } else {
                         Image(eggImages[currentEggIndex])
                             .resizable()
+                            .interpolation(.none)
+                            .antialiased(false)
                             .scaledToFit()
                             .frame(width: 48, height: 48)
                             .animation(
