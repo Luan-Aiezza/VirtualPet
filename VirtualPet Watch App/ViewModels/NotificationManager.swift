@@ -52,7 +52,7 @@ class NotificationManager {
     func sendEggHatchedNotification() {
         let content = UNMutableNotificationContent()
         content.title = "Hello World!!!"
-        content.body = "It's so good to be alive, human!"
+        content.body = "It's so good to be alive, human!/ᐠ - ˕ -マ Ⳋ"
         content.sound = .default
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request) { error in
@@ -68,7 +68,7 @@ class NotificationManager {
     func sendDiscoverFeaturesNotification() {
         let content = UNMutableNotificationContent()
         content.title = "Tip!"
-        content.body = "You can also use sleep and workout mode to satisfy my needs!!"
+        content.body = "You can also use sleep and workout mode to satisfy my needs!❤️"
         content.sound = .default
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request) { error in
