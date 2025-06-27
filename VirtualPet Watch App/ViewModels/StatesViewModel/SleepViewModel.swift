@@ -5,7 +5,7 @@ import Foundation
 
 class SleepViewModel: ObservableObject {
     @Published var sleep: Double = 25.0
-    @Published var isSleeping: Bool = false
+    @Published var isSleeping: Bool = UserDefaults.standard.bool(forKey: "isSleeping")
     @Published var sleepDataManager = SleepDataManager()
 
     private var cancellables: Set<AnyCancellable> = []
@@ -23,10 +23,8 @@ class SleepViewModel: ObservableObject {
     private func handleSleepStateChange(isSleeping: Bool) {
         if isSleeping && self.canSleep() {
             self.isSleeping = true
+            UserDefaults.standard.set(self.isSleeping, forKey: "isSleeping")
             print("Pet começou a dormir via modo sono")
-        } else if !isSleeping && self.isSleeping {
-            self.isSleeping = false
-            print("Pet acordou automaticamente")
         }
     }
     //NOVA FUNÇÃO
@@ -41,10 +39,10 @@ class SleepViewModel: ObservableObject {
     func update(interval: TimeInterval, isSleeping: Bool) {
         if isSleeping {
             // Recupera sono manualmente ou pelo modo sono (até no máximo 100)
-            sleep = min(100, sleep + interval / (8 * 3600) * 100)
+            sleep = min(100, sleep + interval / (8 * 36.00) * 100)
         } else {
             // Gasta sono normalmente
-            sleep = max(0, sleep - interval / (16 * 3600) * 100)
+            sleep = max(0, sleep - interval / (16 * 36.00) * 100)
         }
     }
 
@@ -56,6 +54,7 @@ class SleepViewModel: ObservableObject {
     func toggleSleep() {
         if isSleeping {
             isSleeping = false
+            UserDefaults.standard.set(self.isSleeping, forKey: "isSleeping")
         }
     }
 

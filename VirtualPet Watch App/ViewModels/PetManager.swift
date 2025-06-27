@@ -71,11 +71,9 @@ class PetManager: ObservableObject {
             // Entrar em sono automático via modo sono
             sleepVM.isSleeping = true
             animationController.updateSleepState(isSleeping: true, stage: evolutionManager.stage)
-        } else if !isSleeping && sleepVM.isSleeping {
-            // Acordar automaticamente ao sair do modo sono
-            sleepVM.isSleeping = false
-            animationController.updateSleepState(isSleeping: false, stage: evolutionManager.stage)
         }
+        // Removida a lógica de acordar automaticamente ao sair do modo sono, 
+        // somente o controle manual (botão Awake) deve acordar o pet.
     }
 
 
@@ -204,6 +202,9 @@ class PetManager: ObservableObject {
     public func loadState() {
         hungerVM.hunger = UserDefaults.standard.double(forKey: "hunger")
         sleepVM.sleep = UserDefaults.standard.double(forKey: "sleep")
+        if UserDefaults.standard.object(forKey: "isSleeping") != nil {
+            sleepVM.isSleeping = UserDefaults.standard.bool(forKey: "isSleeping")
+        }
         joyVM.joy = UserDefaults.standard.double(forKey: "joy")
 
         if let birthDate = UserDefaults.standard.object(forKey: "birthDate") as? Date {
@@ -218,6 +219,7 @@ class PetManager: ObservableObject {
     public func saveState() {
         UserDefaults.standard.set(hungerVM.hunger, forKey: "hunger")
         UserDefaults.standard.set(sleepVM.sleep, forKey: "sleep")
+        UserDefaults.standard.set(sleepVM.isSleeping, forKey: "isSleeping")
         UserDefaults.standard.set(joyVM.joy, forKey: "joy")
         UserDefaults.standard.set(lifeManager.birthDate, forKey: "birthDate")
         UserDefaults.standard.set(lifeManager.lastActionTime, forKey: "lastActionTime")
