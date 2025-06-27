@@ -39,10 +39,10 @@ class SleepViewModel: ObservableObject {
     func update(interval: TimeInterval, isSleeping: Bool) {
         if isSleeping {
             // Recupera sono manualmente ou pelo modo sono (até no máximo 100)
-            sleep = min(100, sleep + interval / (8 * 36.00) * 100)
+            sleep = min(100, sleep + interval / (8 * 3600) * 100)
         } else {
             // Gasta sono normalmente
-            sleep = max(0, sleep - interval / (16 * 36.00) * 100)
+            sleep = max(0, sleep - interval / (16 * 3600) * 100)
         }
     }
 
