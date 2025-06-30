@@ -1,4 +1,5 @@
 import SwiftUI
+import TipKit
 
 struct EggIntroView: View {
     @AppStorage("hasSentEggHatchNotif") private var hasSentEggHatchNotif: Bool = false
@@ -24,10 +25,16 @@ struct EggIntroView: View {
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
-
+            
+            VStack{
+                if #available(watchOS 10.0, *) {
+                    TipView(TipManager.shared.getNotificationsTip())
+                        .padding(.horizontal)
+                }
+            }
+            .padding(.bottom, 120)
             VStack {
                 Spacer()
-                
                 Group {
                     if isHatching {
                         Image(hatchingFrames[hatchingFrameIndex])
@@ -60,6 +67,7 @@ struct EggIntroView: View {
                 Spacer()
             }
             .padding(.horizontal, 16)
+            
         }
         .onAppear {
             startEggIdleAnimation()

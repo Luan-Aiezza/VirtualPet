@@ -2,29 +2,12 @@ import SwiftUI
 import Combine
 import WatchKit
 import SpriteKit
+import TipKit
 
 struct ContentView: View {
     @StateObject private var petManager = PetManager()
     @AppStorage("hasSeenEggIntro") private var hasSeenEggIntro: Bool = false
     @State private var introDismissed = false
-    
-    struct PageIndicatorView: View {
-        let currentState: CrownState
-
-        var body: some View {
-            VStack(spacing: 8) {
-                Circle()
-                    .fill(currentState == .hunger ? Color.white : Color.gray.opacity(0.5))
-                    .frame(width: 6, height: 6)
-                Circle()
-                    .fill(currentState == .joy ? Color.white : Color.gray.opacity(0.5))
-                    .frame(width: 6, height: 6)
-                Circle()
-                    .fill(currentState == .sleep ? Color.white : Color.gray.opacity(0.5))
-                    .frame(width: 6, height: 6)
-            }.padding(.trailing, 10)
-        }
-    }
     
     var body: some View {
         if !hasSeenEggIntro && !introDismissed {
@@ -35,7 +18,6 @@ struct ContentView: View {
                     if newValue { introDismissed = true }
                 }
         } else {
-            
             // MARK: - Show Dead Image if pet is dead
             if petManager.lifeManager.isDead {
                 VStack {
@@ -53,7 +35,6 @@ struct ContentView: View {
                 // MARK: - Normal pet interface when pet is alive
                 ZStack(alignment: .leading) {
                     GeometryReader { geo in
-                        
                         progressBarForCurrentState(width: geo.size.width * 0.15)
                         // 🔥 Camada de escurecimento quando está dormindo
                         if petManager.sleepVM.isSleeping {
@@ -72,12 +53,6 @@ struct ContentView: View {
                         }
                         .ignoresSafeArea()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-//                        .focusable()
-//                        .digitalCrownRotation($petManager.crownVM.crownValue,
-//                                              from: 0,
-//                                              through: 2,
-//                                              by: 1,
-//                                              sensitivity: .low)
                         .onAppear {
                             petManager.startTimer()
                         }
@@ -103,7 +78,12 @@ struct ContentView: View {
                             .ignoresSafeArea()
                             .padding(.bottom)
                     )
-
+                    VStack{
+                        if #available(watchOS 10.0, *) {
+                            TipView(TipManager.shared.getSleepExerciseTip())
+                                .padding(.horizontal)
+                        }
+                    }.padding(.bottom, 120)
                 }
                 .allowsHitTesting(!petManager.lifeManager.isDead)
                 // Gesture to detect vertical swipe between pet interfaces
@@ -130,7 +110,7 @@ struct ContentView: View {
         case .hunger:
             ProgressBar(value: petManager.hungerVM.hunger, color: .yellow, iconName: "Feed_Icon")
                 .frame(width: width)
-
+            
         case .joy:
             ProgressBar(value: petManager.joyVM.joy, color: .green, iconName: "Joy_Icon")
                 .frame(width: width)
