@@ -60,8 +60,13 @@ struct ContentView: View {
                             petManager.stopTimer()
                         }
                         //B
-                        PageIndicatorView(currentState: petManager.crownVM.currentState)
-                            .frame(maxWidth: .infinity, alignment: .bottomTrailing)
+                        PageIndicatorView(
+                            currentState: petManager.crownVM.currentState,
+                            sleepLevel: petManager.sleepVM.sleep,
+                            hungerLevel: petManager.hungerVM.hunger,
+                            joyLevel: petManager.joyVM.joy
+                        )
+                        .frame(maxWidth: .infinity, alignment: .bottomTrailing)
                         //P
                         VStack{
                             Spacer()
