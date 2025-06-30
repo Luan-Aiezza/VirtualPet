@@ -8,6 +8,24 @@ struct ContentView: View {
     @AppStorage("hasSeenEggIntro") private var hasSeenEggIntro: Bool = false
     @State private var introDismissed = false
     
+    struct PageIndicatorView: View {
+        let currentState: CrownState
+
+        var body: some View {
+            VStack(spacing: 8) {
+                Circle()
+                    .fill(currentState == .hunger ? Color.white : Color.gray.opacity(0.5))
+                    .frame(width: 6, height: 6)
+                Circle()
+                    .fill(currentState == .joy ? Color.white : Color.gray.opacity(0.5))
+                    .frame(width: 6, height: 6)
+                Circle()
+                    .fill(currentState == .sleep ? Color.white : Color.gray.opacity(0.5))
+                    .frame(width: 6, height: 6)
+            }.padding(.trailing, 10)
+        }
+    }
+    
     var body: some View {
         if !hasSeenEggIntro && !introDismissed {
             EggIntroView()
@@ -34,7 +52,6 @@ struct ContentView: View {
             } else {
                 // MARK: - Normal pet interface when pet is alive
                 ZStack(alignment: .leading) {
-                    
                     GeometryReader { geo in
                         
                         progressBarForCurrentState(width: geo.size.width * 0.15)
@@ -55,19 +72,22 @@ struct ContentView: View {
                         }
                         .ignoresSafeArea()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .focusable()
-                        .digitalCrownRotation($petManager.crownVM.crownValue,
-                                              from: 0,
-                                              through: 2,
-                                              by: 1,
-                                              sensitivity: .low)
+//                        .focusable()
+//                        .digitalCrownRotation($petManager.crownVM.crownValue,
+//                                              from: 0,
+//                                              through: 2,
+//                                              by: 1,
+//                                              sensitivity: .low)
                         .onAppear {
                             petManager.startTimer()
                         }
                         .onDisappear {
                             petManager.stopTimer()
                         }
-                        
+                        //B
+                        PageIndicatorView(currentState: petManager.crownVM.currentState)
+                            .frame(maxWidth: .infinity, alignment: .bottomTrailing)
+                        //P
                         VStack{
                             Spacer()
                             petManager.handleCrownValueButton()
@@ -83,7 +103,7 @@ struct ContentView: View {
                             .ignoresSafeArea()
                             .padding(.bottom)
                     )
-    
+
                 }
                 .allowsHitTesting(!petManager.lifeManager.isDead)
                 // Gesture to detect vertical swipe between pet interfaces
