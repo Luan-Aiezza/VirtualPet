@@ -39,10 +39,28 @@
 		CF4510B12D6E75BE000429C0 /* VirtualPet Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "VirtualPet Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		CFB1AD482E145AFB002AB430 /* Exceptions for "Resources" folder in "VirtualPet" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Localizable.xcstrings,
+			);
+			target = CF4510AA2D6E75BE000429C0 /* VirtualPet */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CF4510B52D6E75BE000429C0 /* VirtualPet Watch App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "VirtualPet Watch App";
+			sourceTree = "<group>";
+		};
+		CFB1AD422E145AC5002AB430 /* Resources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CFB1AD482E145AFB002AB430 /* Exceptions for "Resources" folder in "VirtualPet" target */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -61,6 +79,7 @@
 		CF4510A42D6E75BE000429C0 = {
 			isa = PBXGroup;
 			children = (
+				CFB1AD422E145AC5002AB430 /* Resources */,
 				CF4510B52D6E75BE000429C0 /* VirtualPet Watch App */,
 				CF4510AC2D6E75BE000429C0 /* Products */,
 			);
@@ -111,6 +130,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				CF4510B52D6E75BE000429C0 /* VirtualPet Watch App */,
+				CFB1AD422E145AC5002AB430 /* Resources */,
 			);
 			name = "VirtualPet Watch App";
 			packageProductDependencies = (
@@ -143,6 +163,9 @@
 			knownRegions = (
 				en,
 				Base,
+				ja,
+				"pt-BR",
+				es,
 			);
 			mainGroup = CF4510A42D6E75BE000429C0;
 			minimizedProjectReferenceProxies = 1;
@@ -253,6 +276,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -310,6 +334,7 @@
 				MTL_FAST_MATH = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
 			name = Release;
 		};
@@ -334,7 +359,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.2;
+				MARKETING_VERSION = 3.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = mooncat.HealthFriend.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -367,7 +392,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.2;
+				MARKETING_VERSION = 3.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = mooncat.HealthFriend.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -387,7 +412,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_KEY_CFBundleDisplayName = Hatchiko;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
-				MARKETING_VERSION = 3.0.2;
+				MARKETING_VERSION = 3.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = mooncat.HealthFriend;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -402,7 +427,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_KEY_CFBundleDisplayName = Hatchiko;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
-				MARKETING_VERSION = 3.0.2;
+				MARKETING_VERSION = 3.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = mooncat.HealthFriend;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;

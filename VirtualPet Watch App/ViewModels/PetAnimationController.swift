@@ -67,7 +67,7 @@ class PetAnimationController: ObservableObject {
                     texture.filteringMode = .nearest
                     textures.append(texture)
                 } else {
-                    print("⚠️ Missing texture: \(name)")
+                    print("Missing texture: \(name)")
                 }
             }
             animationTextures[action] = textures
@@ -76,7 +76,7 @@ class PetAnimationController: ObservableObject {
 
     private func runAnimation(named name: String, loop: Bool = true) {
         guard let textures = animationTextures[name], !textures.isEmpty else {
-            print("⚠️ No textures for animation: \(name)")
+            print("No textures for animation: \(name)")
             return
         }
 

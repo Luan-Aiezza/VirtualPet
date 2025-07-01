@@ -51,8 +51,8 @@ class NotificationManager {
     /// Notificação ao chocar o ovo
     func sendEggHatchedNotification() {
         let content = UNMutableNotificationContent()
-        content.title = "Hello World!!!"
-        content.body = "It's so good to be alive, human!/ᐠ - ˕ -マ Ⳋ"
+        content.title = "helloWorld"
+        content.body = "notificationAlive"
         content.sound = .default
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request) { error in
@@ -68,7 +68,7 @@ class NotificationManager {
     func sendDiscoverFeaturesNotification() {
         let content = UNMutableNotificationContent()
         content.title = "Tip!"
-        content.body = "You can also use sleep and workout mode to satisfy my needs!❤️"
+        content.body = "notificationNeeds"
         content.sound = .default
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request) { error in
@@ -76,6 +76,22 @@ class NotificationManager {
                 print("Erro ao agendar notificação de dicas: \(error)")
             } else {
                 print("Notificação de dicas enviada!")
+            }
+        }
+    }
+    
+    /// Notificação ao evoluir o pet
+    func sendEvolutionNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "congratulationsTitle"
+        content.body = "congratulationsText"
+        content.sound = .default
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Erro ao agendar notificação de evolução do pet: \(error)")
+            } else {
+                print("Notificação de evolução do pet enviada!")
             }
         }
     }
@@ -90,17 +106,17 @@ enum PetNotificationType {
     
     var title: String {
         switch self {
-        case .sleepy: return "Your pet is sleepy!"
-        case .hungry: return "Your pet is hungry!"
-        case .sad:    return "Your pet is very still!"
+        case .sleepy: return "sleepyTitle"
+        case .hungry: return "hungryTitle"
+        case .sad:    return "stillTitle"
         }
     }
     
     var body: String {
         switch self {
-        case .sleepy: return "It's time for us to go to sleep, my human! 😴"
-        case .hungry: return "I'm soooo hungry human! 🍖"
-        case .sad:    return "I'm very very bored, human! 🧸"
+        case .sleepy: return "notificationSleep"
+        case .hungry: return "notificationHungry"
+        case .sad:    return "notificationJoy"
         }
     }
     

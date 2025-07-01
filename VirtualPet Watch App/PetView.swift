@@ -26,7 +26,7 @@ struct ContentView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(maxWidth: 120, maxHeight: 120)
-                    Text("Your pet as died!\nReinstall the app!")
+                    Text("petDied")
                         .font(.headline)
                         .multilineTextAlignment(.center)
                     Spacer()
