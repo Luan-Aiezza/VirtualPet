@@ -35,8 +35,11 @@ struct ContentView: View {
                 // MARK: - Normal pet interface when pet is alive
                 ZStack(alignment: .leading) {
                     GeometryReader { geo in
+                        
+                        //Chamada da barra de status
                         progressBarForCurrentState(width: geo.size.width * 0.15)
-                        // 🔥 Camada de escurecimento quando está dormindo
+                        
+                        //Escurecimento caso o pet esteja dormindo
                         if petManager.sleepVM.isSleeping {
                             Color.black.opacity(0.6) // ajuste a opacidade conforme quiser
                                 .ignoresSafeArea()
@@ -45,6 +48,7 @@ struct ContentView: View {
                         }
                         VStack {
                             Spacer()
+                            //Pet
                             SpriteView(scene: petManager.animationController.currentScene!)
                                 .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
                                     petManager.updateState()
@@ -59,7 +63,8 @@ struct ContentView: View {
                         .onDisappear {
                             petManager.stopTimer()
                         }
-                        //B
+                        
+                        //Indicator para em que estado o usuario está
                         PageIndicatorView(
                             currentState: petManager.crownVM.currentState,
                             sleepLevel: petManager.sleepVM.sleep,
@@ -67,7 +72,9 @@ struct ContentView: View {
                             joyLevel: petManager.joyVM.joy
                         )
                         .frame(maxWidth: .infinity, alignment: .bottomTrailing)
-                        //P
+                        .padding(.top)
+                        
+                        //Botões
                         VStack{
                             Spacer()
                             petManager.handleCrownValueButton()
@@ -76,6 +83,7 @@ struct ContentView: View {
                         .ignoresSafeArea()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
+                    //Background
                     .background(
                         Image(backgroundImage(for: petManager.crownVM.currentState))
                             .resizable()
@@ -83,15 +91,16 @@ struct ContentView: View {
                             .ignoresSafeArea()
                             .padding(.bottom)
                     )
+                    //Tip
                     VStack{
                         if #available(watchOS 10.0, *) {
                             TipView(TipManager.shared.getSleepExerciseTip())
                                 .padding(.horizontal)
                         }
-                    }.padding(.bottom, 120)
+                    }.padding(.bottom, 140)
                 }
                 .allowsHitTesting(!petManager.lifeManager.isDead)
-                // Gesture to detect vertical swipe between pet interfaces
+                // Movimentacão via gesture
                 .gesture(
                     DragGesture(minimumDistance: 20, coordinateSpace: .local)
                         .onEnded { value in

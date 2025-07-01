@@ -32,7 +32,7 @@ struct EggIntroView: View {
                         .padding(.horizontal)
                 }
             }
-            .padding(.bottom, 120)
+            .padding(.bottom, 140)
             VStack {
                 Spacer()
                 Group {
@@ -51,7 +51,7 @@ struct EggIntroView: View {
                             .scaledToFit()
                             .frame(width: 48, height: 48)
                             .animation(
-                                Animation.easeInOut(duration: 0.6)
+                                    .easeInOut(duration: 0.6)
                                     .repeatForever(autoreverses: true),
                                 value: animateEggs
                             )
