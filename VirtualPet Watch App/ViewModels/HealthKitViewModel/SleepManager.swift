@@ -52,7 +52,6 @@ class SleepDataManager: ObservableObject {
 
             DispatchQueue.main.async {
                 self.isUserInSleepMode = sample.value == HKCategoryValueSleepAnalysis.inBed.rawValue
-                print("Sleep mode status updated: \(self.isUserInSleepMode)")
             }
         }
 
@@ -121,8 +120,6 @@ class SleepDataManager: ObservableObject {
                     let minute = bedtimes.map { $0.minute ?? 0 }.reduce(0, +) / bedtimes.count
                     self.averageBedtime = DateComponents(hour: hour, minute: minute)
                 }
-
-                print("Média de sono: \(self.averageSleepDuration / 3600)h, horário médio: \(self.averageBedtime.hour ?? -1)h")
             }
         }
 

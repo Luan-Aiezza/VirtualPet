@@ -78,7 +78,7 @@ class PetManager: ObservableObject {
 
 
     public func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
             self.updateState()
         }
         

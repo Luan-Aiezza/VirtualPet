@@ -24,7 +24,6 @@ class SleepViewModel: ObservableObject {
         if isSleeping && self.canSleep() {
             self.isSleeping = true
             UserDefaults.standard.set(self.isSleeping, forKey: "isSleeping")
-            print("Pet começou a dormir via modo sono")
         }
     }
     //NOVA FUNÇÃO
@@ -72,7 +71,6 @@ class SleepViewModel: ObservableObject {
                 let maxSleepTime: TimeInterval = 8 * 3600
                 let percentToAdd = (sleptInterval / maxSleepTime) * 100
                 self.sleep = min(100, self.sleep + percentToAdd)
-                print("[Retroactive Sleep] Added \(percentToAdd)% sleep for interval: \(sleptInterval/3600)h")
             }
         }
     }

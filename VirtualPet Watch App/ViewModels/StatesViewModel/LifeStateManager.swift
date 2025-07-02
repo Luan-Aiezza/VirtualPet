@@ -14,7 +14,7 @@ class LifeStateManager: ObservableObject {
         if hunger <= 0 || sleep <= 0 || joy <= 0 {
             if timeOfDeathStart == nil {
                 timeOfDeathStart = Date()
-            } else if let start = timeOfDeathStart, Date().timeIntervalSince(start) >= 24 * 3600 {
+            } else if let start = timeOfDeathStart, Date().timeIntervalSince(start) >= 48 * 3600 {
                 isDead = true
             }
         } else {
