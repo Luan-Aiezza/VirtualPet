@@ -7,8 +7,7 @@ struct PageIndicatorView: View {
     let joyLevel: Double
     
     var body: some View {
-        VStack(spacing: 8) {
-            
+        HStack(spacing: 8) {
             Circle()
                 .fill(currentState == .hunger ? Color.white : Color.gray.opacity(0.5))
                 .frame(width: 8, height: 8)
@@ -21,6 +20,6 @@ struct PageIndicatorView: View {
                 .fill(currentState == .sleep ? Color.white : Color.gray.opacity(0.5))
                 .frame(width: 8, height: 8)
             
-        }.padding(.trailing, 10)
+        }
     }
 }

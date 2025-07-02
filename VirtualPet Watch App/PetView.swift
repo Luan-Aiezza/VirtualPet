@@ -63,19 +63,18 @@ struct ContentView: View {
                         .onDisappear {
                             petManager.stopTimer()
                         }
-                        
-                        //Indicator para em que estado o usuario está
-                        PageIndicatorView(
-                            currentState: petManager.crownVM.currentState,
-                            sleepLevel: petManager.sleepVM.sleep,
-                            hungerLevel: petManager.hungerVM.hunger,
-                            joyLevel: petManager.joyVM.joy
-                        )
-                        .frame(maxWidth: .infinity, alignment: .bottomTrailing)
-                        .padding(.top)
-                        
+
                         //Botões
                         VStack{
+                            //Indicator para em que estado o usuario está
+                            PageIndicatorView(
+                                currentState: petManager.crownVM.currentState,
+                                sleepLevel: petManager.sleepVM.sleep,
+                                hungerLevel: petManager.hungerVM.hunger,
+                                joyLevel: petManager.joyVM.joy
+                            )
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.top, 30)
                             Spacer()
                             petManager.handleCrownValueButton()
                                 .frame(width: geo.size.width/2.2, height: geo.size.height/2.5)
@@ -104,10 +103,10 @@ struct ContentView: View {
                 .gesture(
                     DragGesture(minimumDistance: 20, coordinateSpace: .local)
                         .onEnded { value in
-                            if value.translation.height < 0 {
+                            if value.translation.width < 0 {
                                 // Swipe up
                                 petManager.crownVM.incrementState()
-                            } else if value.translation.height > 0 {
+                            } else if value.translation.width > 0 {
                                 // Swipe down
                                 petManager.crownVM.decrementState()
                             }
