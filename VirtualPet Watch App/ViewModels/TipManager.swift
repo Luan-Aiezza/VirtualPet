@@ -12,19 +12,19 @@ class TipManager {
     /// A tip que sugere usar as funções Sono e Exercício do watch.
     struct NotificationsTip: Tip {
         var title: Text {
-            Text(.tip)
+            Text("tip")
         }
         var message: Text? {
-            Text(.considerNotifications)
+            Text("considerNotifications")
         }
     }
     
     struct SleepExerciseTip: Tip {
         var title: Text {
-            Text(.tip)
+            Text("tip")
         }
         var message: Text? {
-            Text(.tipHealth)
+            Text("tipHealth")
         }
     }
     

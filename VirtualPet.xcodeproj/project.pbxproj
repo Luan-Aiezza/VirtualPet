@@ -40,7 +40,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		CFB1AD482E145AFB002AB430 /* Exceptions for "Resources" folder in "VirtualPet" target */ = {
+		CF6669E02E15B133005D7538 /* Exceptions for "Resources" folder in "VirtualPet" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Localizable.xcstrings,
@@ -58,7 +58,7 @@
 		CFB1AD422E145AC5002AB430 /* Resources */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				CFB1AD482E145AFB002AB430 /* Exceptions for "Resources" folder in "VirtualPet" target */,
+				CF6669E02E15B133005D7538 /* Exceptions for "Resources" folder in "VirtualPet" target */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
