@@ -34,53 +34,62 @@ struct ContentView: View {
             } else {
                 // MARK: - Normal pet interface when pet is alive
                 ZStack(alignment: .leading) {
-                    GeometryReader { geo in
+                    ZStack(alignment: .topTrailing) {
+                        // Needs Icons, only when alive
+                        PetNeedsIconsView(
+                            showFeed: petManager.hungerVM.canFeed(),
+                            showJoy: petManager.joyVM.canplay(),
+                            showSleep: petManager.sleepVM.canSleep()
+                        )
                         
-                        //Chamada da barra de status
-                        progressBarForCurrentState(width: geo.size.width * 0.15)
-                        
-                        //Escurecimento caso o pet esteja dormindo
-                        if petManager.sleepVM.isSleeping {
-                            Color.black.opacity(0.6) // ajuste a opacidade conforme quiser
-                                .ignoresSafeArea()
-                                .transition(.opacity)
-                                .animation(.easeInOut, value: petManager.sleepVM.isSleeping)
+                        GeometryReader { geo in
+                            
+                            //Chamada da barra de status
+                            progressBarForCurrentState(width: geo.size.width * 0.15)
+                            
+                            //Escurecimento caso o pet esteja dormindo
+                            if petManager.sleepVM.isSleeping {
+                                Color.black.opacity(0.6) // ajuste a opacidade conforme quiser
+                                    .ignoresSafeArea()
+                                    .transition(.opacity)
+                                    .animation(.easeInOut, value: petManager.sleepVM.isSleeping)
+                            }
+                            VStack {
+                                Spacer()
+                                //Pet
+                                SpriteView(scene: petManager.animationController.currentScene!)
+                                    .onReceive(Timer.publish(every: 60, on: .main, in: .common).autoconnect()) { _ in
+                                        petManager.updateState()
+                                    }
+                                Spacer()
+                            }
+                            .ignoresSafeArea()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .onAppear {
+                                petManager.startTimer()
+                            }
+                            .onDisappear {
+                                petManager.stopTimer()
+                            }
+                            
+                            //Botões
+                            VStack{
+                                //Indicator para em que estado o usuario está
+                                PageIndicatorView(
+                                    currentState: petManager.crownVM.currentState,
+                                    sleepLevel: petManager.sleepVM.sleep,
+                                    hungerLevel: petManager.hungerVM.hunger,
+                                    joyLevel: petManager.joyVM.joy
+                                )
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .padding(.top, 30)
+                                Spacer()
+                                petManager.handleCrownValueButton()
+                                    .frame(width: geo.size.width/2.2, height: geo.size.height/2.5)
+                            }
+                            .ignoresSafeArea()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                         }
-                        VStack {
-                            Spacer()
-                            //Pet
-                            SpriteView(scene: petManager.animationController.currentScene!)
-                                .onReceive(Timer.publish(every: 60, on: .main, in: .common).autoconnect()) { _ in
-                                    petManager.updateState()
-                                }
-                            Spacer()
-                        }
-                        .ignoresSafeArea()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .onAppear {
-                            petManager.startTimer()
-                        }
-                        .onDisappear {
-                            petManager.stopTimer()
-                        }
-
-                        //Botões
-                        VStack{
-                            //Indicator para em que estado o usuario está
-                            PageIndicatorView(
-                                currentState: petManager.crownVM.currentState,
-                                sleepLevel: petManager.sleepVM.sleep,
-                                hungerLevel: petManager.hungerVM.hunger,
-                                joyLevel: petManager.joyVM.joy
-                            )
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .padding(.top, 30)
-                            Spacer()
-                            petManager.handleCrownValueButton()
-                                .frame(width: geo.size.width/2.2, height: geo.size.height/2.5)
-                        }
-                        .ignoresSafeArea()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
                     //Background
                     .background(
@@ -142,10 +151,4 @@ struct ContentView: View {
         }
     }
     
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
 }
