@@ -58,7 +58,7 @@ struct ContentView: View {
                                 Spacer()
                                 //Pet
                                 SpriteView(scene: petManager.animationController.currentScene!)
-                                    .onReceive(Timer.publish(every: 60, on: .main, in: .common).autoconnect()) { _ in
+                                    .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
                                         petManager.updateState()
                                     }
                                 Spacer()

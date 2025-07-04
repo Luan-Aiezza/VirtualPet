@@ -33,11 +33,19 @@ struct ProgressBar: View {
                         .frame(width: geometry.size.width, height: geometry.size.height)
                     
                     // Nova camada com BorderBarIcon no canto inferior direito
-                    Image(iconName)
-                        .resizable()
-                        .scaledToFit()
-                        .scaleEffect(1.5)
-                        .position(x: geometry.size.width - (geometry.size.width * 0.4), y: geometry.size.height - (geometry.size.height * 0.05))
+                    if iconName == "Joy_Icon" {
+                        Image(iconName)
+                            .resizable()
+                            .scaledToFit()
+                            .scaleEffect(1.5)
+                            .position(x: geometry.size.width - (geometry.size.width * 0.5), y: geometry.size.height - (geometry.size.height * 0.04))
+                    } else {
+                        Image(iconName)
+                            .resizable()
+                            .scaledToFit()
+                            .scaleEffect(1.5)
+                            .position(x: geometry.size.width - (geometry.size.width * 0.4), y: geometry.size.height - (geometry.size.height * 0.05))
+                    }
                 }
             }
         }
