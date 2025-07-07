@@ -297,25 +297,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your pet has become a star! Reinstall the app!"
+            "value" : "Your pet has become a star!"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu mascota se ha convertido en una estrella! Reinstala la app!"
+            "value" : "Tu mascota se ha convertido en una estrella!"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ペットはお星さまになっちゃった… また育てたい時はアプリを再インストールしてね！\n"
+            "value" : "ペットはお星さまになっちゃった…\n"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu pet virou uma estrelinha! Reinstale o app!"
+            "value" : "Seu pet virou uma estrelinha!"
           }
         }
       }

@@ -224,4 +224,31 @@ class PetManager: ObservableObject {
         UserDefaults.standard.set(lifeManager.birthDate, forKey: "birthDate")
         UserDefaults.standard.set(lifeManager.lastActionTime, forKey: "lastActionTime")
     }
+
+    public func resetAll() {
+        // Reset all core pet stats and states
+        hungerVM.hunger = 25.0
+        sleepVM.sleep = 25.0
+        sleepVM.isSleeping = false
+        joyVM.joy = 25.0
+
+        // Reset evolution and life state
+        let now = Date()
+        lifeManager.birthDate = now
+        lifeManager.lastActionTime = now
+        lifeManager.isDead = false
+
+        // Re-setup animation and evolution
+        evolutionManager.updateStage(birthDate: now)
+        animationController.setupScene(stage: evolutionManager.stage)
+        animationController.resetToIdle()
+
+        // Reset notifications and flags
+        notifiedSleepy = false
+        notifiedHungry = false
+        notifiedSad = false
+
+        // Save the reset state
+        saveState()
+    }
 }

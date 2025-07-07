@@ -4,6 +4,32 @@ import WatchKit
 import SpriteKit
 import TipKit
 
+private func localizedHatchButtonImageName() -> String {
+    let preferredLanguage = Locale.preferredLanguages.first ?? "en"
+    let regionCode = Locale.current.regionCode ?? "US"
+
+    if regionCode == "BR" {
+        if preferredLanguage.hasPrefix("pt") {
+            return "pt_Hatch_Button"
+        } else if preferredLanguage.hasPrefix("es") {
+            return "es_Hatch_Button"
+        } else if preferredLanguage.hasPrefix("ja") || preferredLanguage.hasPrefix("jp") {
+            return "jp_Hatch_Button"
+        } else {
+            return "en_Hatch_Button"
+        }
+    }
+    if preferredLanguage.hasPrefix("pt") {
+        return "pt_Hatch_Button"
+    } else if preferredLanguage.hasPrefix("es") {
+        return "es_Hatch_Button"
+    } else if preferredLanguage.hasPrefix("ja") || preferredLanguage.hasPrefix("jp") {
+        return "jp_Hatch_Button"
+    } else {
+        return "en_Hatch_Button"
+    }
+}
+
 struct ContentView: View {
     @StateObject private var petManager = PetManager()
     @AppStorage("hasSeenEggIntro") private var hasSeenEggIntro: Bool = false
@@ -20,16 +46,35 @@ struct ContentView: View {
         } else {
             // MARK: - Show Dead Image if pet is dead
             if petManager.lifeManager.isDead {
-                VStack {
-                    Spacer()
-                    Image("Dead")
+                ZStack{
+                    Image("Room")
                         .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: 120, maxHeight: 120)
-                    Text("petDied")
-                        .font(.headline)
-                        .multilineTextAlignment(.center)
-                    Spacer()
+                        .scaledToFill()
+                        .ignoresSafeArea()
+                    
+                    VStack {
+                        Spacer()
+                        Button(action: {
+                            // TODO: You must implement petManager.resetAll() to correctly reset the pet/game state.
+                            petManager.resetAll()
+                            hasSeenEggIntro = false
+                            introDismissed = false
+                        }) {
+                            Image(localizedHatchButtonImageName())
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxWidth: 100, maxHeight: 44)
+                        }
+                        .buttonStyle(.borderless)
+                        Image("Dead")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: 120, maxHeight: 120)
+                        Text("petDied")
+                            .font(.headline)
+                            .multilineTextAlignment(.center)
+                        Spacer()
+                    }
                 }
             } else {
                 // MARK: - Normal pet interface when pet is alive
