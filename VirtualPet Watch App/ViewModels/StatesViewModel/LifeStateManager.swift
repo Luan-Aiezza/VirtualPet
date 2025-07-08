@@ -4,7 +4,7 @@ import WatchKit
 import Foundation
 
 class LifeStateManager: ObservableObject {
-    @Published var isDead = true
+    @Published var isDead = false
     @Published var timeOfDeathStart: Date?
     @Published var lastActionTime: Date = Date()
     @Published var birthDate: Date = Date()
