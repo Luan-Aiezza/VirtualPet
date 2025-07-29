@@ -51,8 +51,8 @@ class NotificationManager {
     /// Notificação ao chocar o ovo
     func sendEggHatchedNotification() {
         let content = UNMutableNotificationContent()
-        content.title = "helloWorld"
-        content.body = "notificationAlive"
+        content.title = NSLocalizedString("helloWorld", comment: "Título de ovo chocado")
+        content.body = NSLocalizedString("notificationAlive", comment: "Texto de notificação de ovo chocado")
         content.sound = .default
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request) { error in
@@ -67,8 +67,8 @@ class NotificationManager {
     /// Notificação ao primeiro clique em sleep/feed
     func sendDiscoverFeaturesNotification() {
         let content = UNMutableNotificationContent()
-        content.title = "Tip!"
-        content.body = "notificationNeeds"
+        content.title = NSLocalizedString("tip", comment: "Título de dica")
+        content.body = NSLocalizedString("notificationNeeds", comment: "Texto de notificação de dicas")
         content.sound = .default
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request) { error in
@@ -83,8 +83,8 @@ class NotificationManager {
     /// Notificação ao evoluir o pet
     func sendEvolutionNotification() {
         let content = UNMutableNotificationContent()
-        content.title = "congratulationsTitle"
-        content.body = "congratulationsText"
+        content.title = NSLocalizedString("congratulationsTitle", comment: "Título de notificação de evolução do pet")
+        content.body = NSLocalizedString("congratulationsText", comment: "Texto de notificação de evolução do pet")
         content.sound = .default
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request) { error in
@@ -106,17 +106,17 @@ enum PetNotificationType {
     
     var title: String {
         switch self {
-        case .sleepy: return "sleepyTitle"
-        case .hungry: return "hungryTitle"
-        case .sad:    return "stillTitle"
+        case .sleepy: return NSLocalizedString("sleepyTitle", comment: "Título notificação pet com sono")
+        case .hungry: return NSLocalizedString("hungryTitle", comment: "Título notificação pet com fome")
+        case .sad:    return NSLocalizedString("stillTitle", comment: "Título notificação pet triste")
         }
     }
     
     var body: String {
         switch self {
-        case .sleepy: return "notificationSleep"
-        case .hungry: return "notificationHungry"
-        case .sad:    return "notificationJoy"
+        case .sleepy: return NSLocalizedString("notificationSleep", comment: "Corpo notificação pet com sono")
+        case .hungry: return NSLocalizedString("notificationHungry", comment: "Corpo notificação pet com fome")
+        case .sad:    return NSLocalizedString("notificationJoy", comment: "Corpo notificação pet triste")
         }
     }
     
